@@ -1,0 +1,89 @@
+# GENERADO por generar_wireviz.py desde layouts.py (estacion_anaquel). No editar a mano.
+metadata:
+  title: Argos - nodo anaquel
+  notes: "Borrador. Componentes en la protoboard: hardware/breadboard/estacion_anaquel_protoboard.md"
+connectors:
+  PB:
+    type: "Protoboard 830 pts + 2 NodeMCU Amica"
+    subtype: puntos de conexion (ver dibujo de protoboard)
+    pinlabels:
+      - "acel_LED_V (a19)"
+      - "GND (A_GND:18)"
+      - "acel_LED_R (a30)"
+      - "GND (A_GND:30)"
+      - "luz_LED_V (a53)"
+      - "GND (A_GND:52)"
+      - "luz_LED_R (a55)"
+      - "GND (A_GND:56)"
+      - "luz_A0 (c58)"
+      - "luz_3V3 (J_3V3:58)"
+      - "5V (A_5V:32)"
+      - "GND (A_GND:32)"
+  acel_LED_V:
+    type: "LED 5 mm verde (tapa, izquierda)"
+    pinlabels: ["A", "K"]
+  acel_LED_R:
+    type: "LED 5 mm rojo (tapa, derecha)"
+    pinlabels: ["A", "K"]
+  luz_LED_V:
+    type: "LED 5 mm verde (tapa, izquierda)"
+    pinlabels: ["A", "K"]
+  luz_LED_R:
+    type: "LED 5 mm rojo (tapa, derecha)"
+    pinlabels: ["A", "K"]
+  luz_LDR:
+    type: "Fotorresistencia (tapa, tras el difusor)"
+    pinlabels: ["1", "2"]
+  Entrada5V:
+    type: "Modulo de entrada USB-C (5 V de la fuente de la caja)"
+    pinlabels: ["+", "-"]
+cables:
+  W_acel_LED_V:
+    wirecount: 2
+    colors: [GN, BK]
+    length: 0.15
+    type: "Dupont M-H"
+  W_acel_LED_R:
+    wirecount: 2
+    colors: [RD, BK]
+    length: 0.15
+    type: "Dupont M-H"
+  W_luz_LED_V:
+    wirecount: 2
+    colors: [GN, BK]
+    length: 0.15
+    type: "Dupont M-H"
+  W_luz_LED_R:
+    wirecount: 2
+    colors: [RD, BK]
+    length: 0.15
+    type: "Dupont M-H"
+  W_luz_LDR:
+    wirecount: 2
+    colors: [YE, OG]
+    length: 0.15
+    type: "Dupont M-H"
+  W_Entrada5V:
+    wirecount: 2
+    colors: [RD, BK]
+    length: 0.15
+    type: "Dupont M-H"
+connections:
+  - - PB: [1, 2]
+    - W_acel_LED_V: [1-2]
+    - acel_LED_V: ["A", "K"]
+  - - PB: [3, 4]
+    - W_acel_LED_R: [1-2]
+    - acel_LED_R: ["A", "K"]
+  - - PB: [5, 6]
+    - W_luz_LED_V: [1-2]
+    - luz_LED_V: ["A", "K"]
+  - - PB: [7, 8]
+    - W_luz_LED_R: [1-2]
+    - luz_LED_R: ["A", "K"]
+  - - PB: [9, 10]
+    - W_luz_LDR: [1-2]
+    - luz_LDR: ["1", "2"]
+  - - PB: [11, 12]
+    - W_Entrada5V: [1-2]
+    - Entrada5V: ["+", "-"]

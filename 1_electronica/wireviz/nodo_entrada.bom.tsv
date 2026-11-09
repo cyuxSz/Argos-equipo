@@ -1,0 +1,9 @@
+Id	Description	Qty	Unit	Designators
+1	Cable, Dupont M-H, 2 wires	0.9	m	W_Entrada5V, W_pir_LED_R, W_pir_LED_V, W_puerta_LED_R, W_puerta_LED_V, W_puerta_Reed
+2	Cable, Dupont M-H, 3 wires	0.15	m	W_pir_PIR
+3	Connector, HC-SR501 (tapa), 3 pins	1		pir_PIR
+4	Connector, LED 5 mm rojo (tapa, derecha), 2 pins	2		pir_LED_R, puerta_LED_R
+5	Connector, LED 5 mm verde (tapa, izquierda), 2 pins	2		pir_LED_V, puerta_LED_V
+6	Connector, Modulo de entrada USB-C (5 V de la fuente de la caja), 2 pins	1		Entrada5V
+7	Connector, Protoboard 830 pts + 2 NodeMCU Amica, puntos de conexion (ver dibujo de protoboard), 15 pins	1		PB
+8	Connector, Reed switch MC-38 (marco de la puerta), 2 pins	1		puerta_Reed

@@ -1,0 +1,520 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<!-- Created with Fritzing (http://www.fritzing.org/) -->
+<svg xmlns:svg='http://www.w3.org/2000/svg' xmlns='http://www.w3.org/2000/svg' version='1.2' baseProfile='tiny' x='0in' y='0in' width='5.73333in' height='1.8661in' viewBox='0 0 5733.33 1866.1' >
+<g partID='50120'><g transform='translate(5333.33,1333.33)' ><g xmlns="http://www.w3.org/2000/svg" stroke-linejoin="round" fill="none" stroke="#f6ca34" id="copper0" stroke-width="20" stroke-linecap="round">
+ <path xmlns="http://www.w3.org/2000/svg" d="" id="connector1pad"/>
+ <path xmlns="http://www.w3.org/2000/svg" d="" id="connector2pad"/>
+ <path xmlns="http://www.w3.org/2000/svg" d="" id="connector3pad"/>
+</g>
+</g></g><g partID='50090'><g transform='translate(1333.33,1333.33)' ><g xmlns="http://www.w3.org/2000/svg" id="copper0">
+ <g xmlns="http://www.w3.org/2000/svg" id="copper1">
+  <circle xmlns="http://www.w3.org/2000/svg" cx="122.05" cy="147.689" r="23.6222" fill="none" stroke="#F7BD13" id="connector1pad" stroke-width="15.7478"/>
+  <rect xmlns="http://www.w3.org/2000/svg" x="98.4278" height="47.2444" stroke="#F7BD13" fill="none" width="47.2444" stroke-width="15.7478" y="124.067"/>
+  <circle xmlns="http://www.w3.org/2000/svg" cx="122.05" cy="49.2556" r="23.6222" fill="none" stroke="#F7BD13" id="connector0pad" stroke-width="15.7478"/>
+ </g>
+</g>
+</g></g><g partID='50060'><g transform='translate(5333.33,0)' ><g xmlns="http://www.w3.org/2000/svg" id="copper0">
+ <g xmlns="http://www.w3.org/2000/svg" id="copper1">
+  <circle xmlns="http://www.w3.org/2000/svg" cx="122.05" cy="147.689" r="23.6222" fill="none" stroke="#F7BD13" id="connector1pad" stroke-width="15.7478"/>
+  <rect xmlns="http://www.w3.org/2000/svg" x="98.4278" height="47.2444" stroke="#F7BD13" fill="none" width="47.2444" stroke-width="15.7478" y="124.067"/>
+  <circle xmlns="http://www.w3.org/2000/svg" cx="122.05" cy="49.2556" r="23.6222" fill="none" stroke="#F7BD13" id="connector0pad" stroke-width="15.7478"/>
+ </g>
+</g>
+</g></g><g partID='50050'><g transform='translate(4000,0)' ><g xmlns="http://www.w3.org/2000/svg" id="copper0">
+ <g xmlns="http://www.w3.org/2000/svg" id="copper1">
+  <!-- <rect width="55" x="10" y="15.5" fill="none" height="55" stroke="rgb(255, 191, 0)" stroke-width="20" />  -->
+  <circle xmlns="http://www.w3.org/2000/svg" cx="37.5" cy="43" r="27.5" fill="none" stroke="rgb(255, 191, 0)" id="connector0pin" stroke-width="20"/>
+  <circle xmlns="http://www.w3.org/2000/svg" cx="437.5" cy="43" r="27.5" fill="none" stroke="rgb(255, 191, 0)" id="connector1pin" stroke-width="20"/>
+ </g>
+</g>
+</g></g><g partID='50040'><g transform='translate(2666.67,0)' ><g xmlns="http://www.w3.org/2000/svg" id="copper0">
+ <g xmlns="http://www.w3.org/2000/svg" id="copper1">
+  <!-- <rect width="55" x="10" y="15.5" fill="none" height="55" stroke="rgb(255, 191, 0)" stroke-width="20" />  -->
+  <circle xmlns="http://www.w3.org/2000/svg" cx="37.5" cy="43" r="27.5" fill="none" stroke="rgb(255, 191, 0)" id="connector0pin" stroke-width="20"/>
+  <circle xmlns="http://www.w3.org/2000/svg" cx="437.5" cy="43" r="27.5" fill="none" stroke="rgb(255, 191, 0)" id="connector1pin" stroke-width="20"/>
+ </g>
+</g>
+</g></g><g partID='50030'><g transform='translate(1333.33,0)' ><g xmlns="http://www.w3.org/2000/svg" id="copper0">
+ <rect xmlns="http://www.w3.org/2000/svg" x="77.5" height="55" width="55" stroke="#ffbf00" fill="none" id="rect11" stroke-width="20" y="177.5"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="105" cy="205" r="27.5" stroke="#ffbf00" fill="none" id="connector0pin" stroke-width="20"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="305" cy="205" r="27.5" stroke="#ffbf00" fill="none" id="connector1pin" stroke-width="20"/>
+</g>
+</g></g><g partID='50020'><g xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#EEBD2C" id="copper0" stroke-width="16" gorn="0.3.0">
+ <circle xmlns="http://www.w3.org/2000/svg" cx="43.1389" cy="1633.74" r="22" id="connector29pin" gorn="0.3.0.0"/>
+ <rect xmlns="http://www.w3.org/2000/svg" x="21.125" height="44.0275" width="44.0139" id="_x32_9square" y="1512.21" gorn="0.3.0.1"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="43.1389" cy="1534.16" r="22" id="connector28pin" gorn="0.3.0.2"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="43.1389" cy="1434.57" r="22" id="connector27pin" gorn="0.3.0.3"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="43.1389" cy="1335.03" r="22" id="connector26pin" gorn="0.3.0.4"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="43.1389" cy="1235.45" r="22" id="connector25pin" gorn="0.3.0.5"/>
+ <rect xmlns="http://www.w3.org/2000/svg" x="21.125" height="44.0275" width="44.0139" id="_x32_5square" y="1113.87" gorn="0.3.0.6"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="43.1389" cy="1135.9" r="22" id="connector24pin" gorn="0.3.0.7"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="43.1389" cy="1036.31" r="22" id="connector23pin" gorn="0.3.0.8"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="43.1389" cy="936.731" r="22" id="connector22pin" gorn="0.3.0.9"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="43.1389" cy="837.162" r="22" id="connector21pin" gorn="0.3.0.10"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="43.1389" cy="737.579" r="22" id="connector20pin" gorn="0.3.0.11"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="43.1389" cy="638.024" r="22" id="connector19pin" gorn="0.3.0.12"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="43.1389" cy="538.455" r="22" id="connector18pin" gorn="0.3.0.13"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="43.1389" cy="438.872" r="22" id="connector17pin" gorn="0.3.0.14"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="43.1389" cy="339.29" r="22" id="connector16pin" gorn="0.3.0.15"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="43.1389" cy="239.735" r="22" id="connector15pin" gorn="0.3.0.16"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="936.946" cy="239.735" r="22" id="connector14pin" gorn="0.3.0.17"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="936.946" cy="339.29" r="22" id="connector13pin" gorn="0.3.0.18"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="936.946" cy="438.872" r="22" id="connector12pin" gorn="0.3.0.19"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="936.946" cy="538.455" r="22" id="connector11pin" gorn="0.3.0.20"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="936.946" cy="638.024" r="22" id="connector10pin" gorn="0.3.0.21"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="936.946" cy="737.579" r="22" id="connector9pin" gorn="0.3.0.22"/>
+ <rect xmlns="http://www.w3.org/2000/svg" x="914.945" height="44.0275" width="44.0001" id="_x39_square" y="815.148" gorn="0.3.0.23"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="936.946" cy="837.162" r="22" id="connector8pin" gorn="0.3.0.24"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="936.946" cy="936.731" r="22" id="connector7pin" gorn="0.3.0.25"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="936.946" cy="1036.31" r="22" id="connector6pin" gorn="0.3.0.26"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="936.946" cy="1135.9" r="22" id="connector5pin" gorn="0.3.0.27"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="936.946" cy="1235.45" r="22" id="connector4pin" gorn="0.3.0.28"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="936.946" cy="1335.03" r="22" id="connector3pin" gorn="0.3.0.29"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="936.946" cy="1434.57" r="22" id="connector2pin" gorn="0.3.0.30"/>
+ <rect xmlns="http://www.w3.org/2000/svg" x="914.945" height="44.0275" width="44.0001" id="_x32_square" y="1512.21" gorn="0.3.0.31"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="936.946" cy="1534.16" r="22" id="connector1pin" gorn="0.3.0.32"/>
+ <circle xmlns="http://www.w3.org/2000/svg" cx="936.946" cy="1633.74" r="22" id="connector0pin" gorn="0.3.0.33"/>
+</g>
+</g><g partID='50122'><g transform='translate(5333.33,1333.33)' ><g xmlns="http://www.w3.org/2000/svg" id="silkscreen">
+ <g xmlns="http://www.w3.org/2000/svg" font-size="0" text-align="center" xml:space="preserve" xmlns:xml="http://www.w3.org/XML/1998/namespace" style="line-height:125%" fill="#ffffff" font-family="OCRA" text-anchor="middle" word-spacing="0px" letter-spacing="0px">
+  <text xmlns="http://www.w3.org/2000/svg" x="100" y="255">VDD</text>
+  <text xmlns="http://www.w3.org/2000/svg" x="200" y="380">SIG</text>
+  <text xmlns="http://www.w3.org/2000/svg" x="300" y="255">GND</text>
+ </g>
+ <rect xmlns="http://www.w3.org/2000/svg" x="5" height="190" width="390" fill="none" stroke="#fff" stroke-width="5" y="205"/>
+</g>
+</g></g><g partID='50092'><g transform='translate(1333.33,1333.33)' ><g xmlns="http://www.w3.org/2000/svg" id="silkscreen">
+ <path xmlns="http://www.w3.org/2000/svg" stroke-linejoin="round" d="M193.222,4.23333c52.0556,39.3,62.3778,113.367,23.0667,165.433c-39.3111,52.0556,-113.378,62.3778,-165.433,23.0667S-11.5111,79.3444,27.8,27.3C34.4778,18.4444,42.3667,10.5778,51.2556,3.93333" fill="none" stroke="#FFFFFF" id="path2820" stroke-width="7.87444" stroke-linecap="round"/>
+ <path xmlns="http://www.w3.org/2000/svg" d="M192.911,3.98889L51.1778,3.98889" fill="none" stroke="#FFFFFF" id="path3707" stroke-width="7.87444" stroke-linecap="round"/>
+</g>
+</g></g><g partID='50062'><g transform='translate(5333.33,0)' ><g xmlns="http://www.w3.org/2000/svg" id="silkscreen">
+ <path xmlns="http://www.w3.org/2000/svg" stroke-linejoin="round" d="M193.222,4.23333c52.0556,39.3,62.3778,113.367,23.0667,165.433c-39.3111,52.0556,-113.378,62.3778,-165.433,23.0667S-11.5111,79.3444,27.8,27.3C34.4778,18.4444,42.3667,10.5778,51.2556,3.93333" fill="none" stroke="#FFFFFF" id="path2820" stroke-width="7.87444" stroke-linecap="round"/>
+ <path xmlns="http://www.w3.org/2000/svg" d="M192.911,3.98889L51.1778,3.98889" fill="none" stroke="#FFFFFF" id="path3707" stroke-width="7.87444" stroke-linecap="round"/>
+</g>
+</g></g><g partID='50052'><g transform='translate(4000,0)' ><g xmlns="http://www.w3.org/2000/svg" id="silkscreen">
+ <line xmlns="http://www.w3.org/2000/svg" y1="43" stroke="white" stroke-width="10" y2="43" x2="147" x1="75"/>
+ <line xmlns="http://www.w3.org/2000/svg" y1="43" stroke="white" stroke-width="10" y2="43" x2="400" x1="347"/>
+ <line xmlns="http://www.w3.org/2000/svg" y1="10" stroke="white" stroke-width="10" y2="10" x2="347" x1="147"/>
+ <line xmlns="http://www.w3.org/2000/svg" y1="10" stroke="white" stroke-width="10" y2="76" x2="347" x1="347"/>
+ <line xmlns="http://www.w3.org/2000/svg" y1="76" stroke="white" stroke-width="10" y2="76" x2="147" x1="347"/>
+ <line xmlns="http://www.w3.org/2000/svg" y1="76" stroke="white" stroke-width="10" y2="10" x2="147" x1="147"/>
+</g>
+</g></g><g partID='50042'><g transform='translate(2666.67,0)' ><g xmlns="http://www.w3.org/2000/svg" id="silkscreen">
+ <line xmlns="http://www.w3.org/2000/svg" y1="43" stroke="white" stroke-width="10" y2="43" x2="147" x1="75"/>
+ <line xmlns="http://www.w3.org/2000/svg" y1="43" stroke="white" stroke-width="10" y2="43" x2="400" x1="347"/>
+ <line xmlns="http://www.w3.org/2000/svg" y1="10" stroke="white" stroke-width="10" y2="10" x2="347" x1="147"/>
+ <line xmlns="http://www.w3.org/2000/svg" y1="10" stroke="white" stroke-width="10" y2="76" x2="347" x1="347"/>
+ <line xmlns="http://www.w3.org/2000/svg" y1="76" stroke="white" stroke-width="10" y2="76" x2="147" x1="347"/>
+ <line xmlns="http://www.w3.org/2000/svg" y1="76" stroke="white" stroke-width="10" y2="10" x2="147" x1="147"/>
+</g>
+</g></g><g partID='50032'><g transform='translate(1333.33,0)' ><g  id="silkscreen">
+ <g  id="silk">
+  <circle  cx="205" cy="205" r="200" stroke="#ffffff" fill="none" id="circle7" stroke-width="10"/>
+ </g>
+ <g transform="scale(11.111111,11.111111)">
+  <path  d="m7.2,9.9,4.5,0" style="stroke-linecap:round" stroke="#ffffff" fill="none" id="path3612" stroke-width="1"/>
+ </g>
+ <g transform="scale(11.111111,11.111111)">
+  <path  d="m7.2,27,4.5,0" style="stroke-linecap:round" stroke="#ffffff" fill="none" id="path3614" stroke-width="1"/>
+ </g>
+</g>
+</g></g><g partID='50022'><g  id="silkscreen" gorn="0.2">
+ <g  fill="none" stroke="#000" stroke-width="3.47223">
+  <path  d="M976.39,1787.39c0,43.4859,-35.2639,78.7356,-78.7501,78.7356L78.7362,1866.13c-43.4862,0,-78.7362,-35.2498,-78.7362,-78.7356L0,78.7356C0,35.2637,35.25,0,78.7362,0L897.64,0c43.4862,0,78.7501,35.2637,78.7501,78.7356L976.39,1787.39z"/>
+  <circle  cx="893.848" cy="1783.46" r="63.0001"/>
+  <circle  cx="82.6668" cy="1783.46" r="62.9862"/>
+  <circle  cx="893.848" cy="82.694" r="63.0001"/>
+  <circle  cx="82.6668" cy="82.694" r="62.9862"/>
+  <rect  x="274.389" height="570.858" width="452.764" y="289.818"/>
+ </g>
+ <g  id="Right" gorn="0.2.6">
+  <g transform="matrix(0, 1, -1, 0, 853.251, 1592.91)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">3</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 1618.46)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">V</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 1644.16)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">3</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 1493.46)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">G</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 1519.02)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">N</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 1544.71)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">D</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 1406.8)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">T</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 1432.35)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">X</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 1307.3)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">R</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 1332.94)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">X</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 1207.83)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">D</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 1233.46)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">8</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 1108.35)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">D</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 1133.99)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">7</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 1008.91)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">D</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 1034.55)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">6</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 909.439)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">D</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 935.078)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">5</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 797.162)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">G</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 822.773)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">N</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 848.398)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">D</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 697.69)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">3</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 723.301)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">V</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 748.926)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">3</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 611.024)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">D</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 636.649)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">4</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 511.553)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">D</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 537.177)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">3</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 412.095)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">D</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 437.734)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">2</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 312.623)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">D</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 338.262)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">1</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 213.152)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">D</text>
+   </g>
+  </g>
+  <g transform="matrix(0, 1, -1, 0, 853.251, 238.79)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">0</text>
+   </g>
+  </g>
+ </g>
+ <g  id="Left" gorn="0.2.7">
+  <g transform="matrix(0, -1, 1, 0, 125.908, 1669.71)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">V</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 1648.18)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">i</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 1626.8)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">n</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 1574.44)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">G</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 1548.74)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">N</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 1523.19)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">D</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 1474.99)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">R</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 1449.3)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">S</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 1423.74)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">T</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 1362.66)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">E</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 1337.02)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">N</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 1276.02)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">3</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 1250.38)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">V</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 1224.77)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">3</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 1176.62)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">G</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 1150.99)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">N</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 1125.38)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">D</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 1077.23)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">C</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 1051.59)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">L</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 1025.99)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">K</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 977.758)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">S</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 952.119)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">D</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 926.522)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">0</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 878.286)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">C</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 852.675)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">M</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 827.037)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">D</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 778.815)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">S</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 753.204)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">D</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 727.565)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">1</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 679.343)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">S</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 653.732)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">D</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 628.093)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">2</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 579.858)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">S</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 554.261)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">D</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 528.622)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">3</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 480.386)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">R</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 454.775)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">S</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 429.15)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">V</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 380.914)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">R</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 355.303)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">S</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 329.679)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">V</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 268.651)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">A</text>
+   </g>
+  </g>
+  <g transform="matrix(0, -1, 1, 0, 125.908, 243.026)">
+   <g >
+    <text  font-size="41.6667" font-family="OCRA">0</text>
+   </g>
+  </g>
+ </g>
+</g>
+</g></svg>

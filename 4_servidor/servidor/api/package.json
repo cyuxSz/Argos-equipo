@@ -1,0 +1,17 @@
+{
+  "name": "argos-api",
+  "version": "1.0.0",
+  "description": "API REST de Argos: los NodeMCU registran mediciones, eventos y acciones; el dashboard consulta",
+  "main": "RestApi.js",
+  "type": "commonjs",
+  "private": true,
+  "scripts": {
+    "start": "node RestApi.js",
+    "local": "node --env-file=config_local RestApi.js"
+  },
+  "dependencies": {
+    "express": "5.3.0",
+    "mqtt": "5.16.1",
+    "mysql2": "3.24.6"
+  }
+}

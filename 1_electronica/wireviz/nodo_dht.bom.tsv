@@ -1,0 +1,11 @@
+Id	Description	Qty	Unit	Designators
+1	Cable, Dupont M-H, 2 wires	0.6	m	W_Boton, W_Buzzer, W_LED_R, W_LED_V
+2	Cable, Dupont M-H, 3 wires	0.2	m	W_DHT22
+3	Cable, Dupont M-H, 4 wires	0.15	m	W_OLED
+4	Connector, Buzzer activo KY-012 (pinout POR CONFIRMAR), 2 pins	1		Buzzer
+5	Connector, DHT22 (camara inferior), 3 pins	1		DHT22
+6	Connector, LED 5 mm rojo (tapa, derecha), 2 pins	1		LED_R
+7	Connector, LED 5 mm verde (tapa, izquierda), 2 pins	1		LED_V
+8	Connector, OLED 2.42" SSD1309 I2C (4 pines), 4 pins	1		OLED
+9	Connector, Protoboard 400 pts + NodeMCU Amica, puntos de conexion (ver dibujo de protoboard), 15 pins	1		PB
+10	Connector, Pulsador 6x6 del kit (tapa), 2 pins	1		Boton

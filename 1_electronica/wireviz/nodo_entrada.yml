@@ -1,0 +1,103 @@
+# GENERADO por generar_wireviz.py desde layouts.py (estacion_entrada). No editar a mano.
+metadata:
+  title: Argos - nodo entrada
+  notes: "Borrador. Componentes en la protoboard: hardware/breadboard/estacion_entrada_protoboard.md"
+connectors:
+  PB:
+    type: "Protoboard 830 pts + 2 NodeMCU Amica"
+    subtype: puntos de conexion (ver dibujo de protoboard)
+    pinlabels:
+      - "pir_LED_V (a20)"
+      - "GND (A_GND:19)"
+      - "pir_LED_R (a22)"
+      - "GND (A_GND:23)"
+      - "5V (A_5V:28)"
+      - "pir_D5 (f27)"
+      - "GND (A_GND:28)"
+      - "puerta_LED_V (a53)"
+      - "GND (A_GND:52)"
+      - "puerta_LED_R (a55)"
+      - "GND (A_GND:56)"
+      - "puerta_D5 (f60)"
+      - "GND (J_GND:60)"
+      - "5V (A_5V:32)"
+      - "GND (A_GND:32)"
+  pir_LED_V:
+    type: "LED 5 mm verde (tapa, izquierda)"
+    pinlabels: ["A", "K"]
+  pir_LED_R:
+    type: "LED 5 mm rojo (tapa, derecha)"
+    pinlabels: ["A", "K"]
+  pir_PIR:
+    type: "HC-SR501 (tapa)"
+    pinlabels: ["VCC", "OUT", "GND"]
+  puerta_LED_V:
+    type: "LED 5 mm verde (tapa, izquierda)"
+    pinlabels: ["A", "K"]
+  puerta_LED_R:
+    type: "LED 5 mm rojo (tapa, derecha)"
+    pinlabels: ["A", "K"]
+  puerta_Reed:
+    type: "Reed switch MC-38 (marco de la puerta)"
+    pinlabels: ["1", "2"]
+  Entrada5V:
+    type: "Modulo de entrada USB-C (5 V de la fuente de la caja)"
+    pinlabels: ["+", "-"]
+cables:
+  W_pir_LED_V:
+    wirecount: 2
+    colors: [GN, BK]
+    length: 0.15
+    type: "Dupont M-H"
+  W_pir_LED_R:
+    wirecount: 2
+    colors: [RD, BK]
+    length: 0.15
+    type: "Dupont M-H"
+  W_pir_PIR:
+    wirecount: 3
+    colors: [RD, WH, BK]
+    length: 0.15
+    type: "Dupont M-H"
+  W_puerta_LED_V:
+    wirecount: 2
+    colors: [GN, BK]
+    length: 0.15
+    type: "Dupont M-H"
+  W_puerta_LED_R:
+    wirecount: 2
+    colors: [RD, BK]
+    length: 0.15
+    type: "Dupont M-H"
+  W_puerta_Reed:
+    wirecount: 2
+    colors: [WH, BK]
+    length: 0.15
+    type: "Dupont M-H"
+  W_Entrada5V:
+    wirecount: 2
+    colors: [RD, BK]
+    length: 0.15
+    type: "Dupont M-H"
+connections:
+  - - PB: [1, 2]
+    - W_pir_LED_V: [1-2]
+    - pir_LED_V: ["A", "K"]
+  - - PB: [3, 4]
+    - W_pir_LED_R: [1-2]
+    - pir_LED_R: ["A", "K"]
+  - - PB: [5, 6, 7]
+    - W_pir_PIR: [1-3]
+    - pir_PIR: ["VCC", "OUT", "GND"]
+  - - PB: [8, 9]
+    - W_puerta_LED_V: [1-2]
+    - puerta_LED_V: ["A", "K"]
+  - - PB: [10, 11]
+    - W_puerta_LED_R: [1-2]
+    - puerta_LED_R: ["A", "K"]
+  - - PB: [12, 13]
+    - W_puerta_Reed: [1-2]
+    - puerta_Reed: ["1", "2"]
+  - - PB: [14, 15]
+    - W_Entrada5V: [1-2]
+    - Entrada5V: ["+", "-"]

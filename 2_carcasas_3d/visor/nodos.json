@@ -1,0 +1,176 @@
+{
+ "dht": {
+  "grupos": [
+   "base",
+   "tapa",
+   "protoboard",
+   "placa",
+   "modulos",
+   "cables",
+   "led_v",
+   "led_r",
+   "pantalla",
+   "modulos_t"
+  ],
+  "W": 80.0,
+  "H": 138.3,
+  "D": 40.5,
+  "con_orejas": [
+   80.0,
+   166.3,
+   40.5
+  ],
+  "centro": [
+   0.0,
+   69.15,
+   20.25
+  ],
+  "niveles": [
+   {
+    "clave": "n1",
+    "nombre": "Piso: protoboard, guías y torretas",
+    "z": 6.0
+   },
+   {
+    "clave": "n2",
+    "nombre": "Placas y componentes",
+    "z": 12.0
+   },
+   {
+    "clave": "n3",
+    "nombre": "Conectores y módulos",
+    "z": 20.0
+   },
+   {
+    "clave": "n4",
+    "nombre": "Bajo la tapa: módulos altos y costillas",
+    "z": 30.0
+   },
+   {
+    "clave": "n5",
+    "nombre": "Frente de la tapa: ventanas y LED",
+    "z": 39.2
+   }
+  ]
+ },
+ "entrada": {
+  "grupos": [
+   "base",
+   "tapa",
+   "protoboard",
+   "placa",
+   "modulos",
+   "cables",
+   "led_v",
+   "led_r",
+   "modulos_t",
+   "domo"
+  ],
+  "W": 173.9,
+  "H": 80.0,
+  "D": 40.5,
+  "con_orejas": [
+   201.9,
+   80.0,
+   40.5
+  ],
+  "centro": [
+   0.0,
+   40.0,
+   20.25
+  ],
+  "niveles": [
+   {
+    "clave": "n1",
+    "nombre": "Piso: protoboard, guías y torretas",
+    "z": 6.0
+   },
+   {
+    "clave": "n2",
+    "nombre": "Placas y componentes",
+    "z": 12.0
+   },
+   {
+    "clave": "n3",
+    "nombre": "Conectores y módulos",
+    "z": 20.0
+   },
+   {
+    "clave": "n4",
+    "nombre": "Bajo la tapa: módulos altos y costillas",
+    "z": 30.0
+   },
+   {
+    "clave": "n5",
+    "nombre": "Frente de la tapa: ventanas y LED",
+    "z": 39.2
+   }
+  ]
+ },
+ "anaquel": {
+  "grupos": [
+   "base",
+   "tapa",
+   "protoboard",
+   "placa",
+   "modulos",
+   "cables",
+   "led_v",
+   "led_r"
+  ],
+  "W": 173.9,
+  "H": 80.0,
+  "D": 40.5,
+  "con_orejas": [
+   201.9,
+   80.0,
+   40.5
+  ],
+  "centro": [
+   0.0,
+   40.0,
+   20.25
+  ],
+  "niveles": [
+   {
+    "clave": "n1",
+    "nombre": "Piso: protoboard, guías y torretas",
+    "z": 6.0
+   },
+   {
+    "clave": "n2",
+    "nombre": "Placas y componentes",
+    "z": 12.0
+   },
+   {
+    "clave": "n3",
+    "nombre": "Conectores y módulos",
+    "z": 20.0
+   },
+   {
+    "clave": "n4",
+    "nombre": "Bajo la tapa: módulos altos y costillas",
+    "z": 30.0
+   },
+   {
+    "clave": "n5",
+    "nombre": "Frente de la tapa: ventanas y LED",
+    "z": 39.2
+   }
+  ]
+ },
+ "accesorios": {
+  "piezas": [
+   "ldr_capuchon",
+   "ldr_difusor",
+   "ldr_ldr",
+   "ldr_cable",
+   "ldr_soporte",
+   "mc38_calza",
+   "mc38_porta_sensor",
+   "mc38_cuerpo_sensor",
+   "mc38_porta_iman",
+   "mc38_cuerpo_iman"
+  ]
+ }
+}

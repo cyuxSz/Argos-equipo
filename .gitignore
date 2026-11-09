@@ -1,0 +1,16 @@
+# Claves: nunca se suben
+.env
+**/secrets.h
+**/config_local
+**/mosquitto/passwd
+
+# Dependencias y compilación
+node_modules/
+**/.pio/
+__pycache__/
+*.pyc
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini

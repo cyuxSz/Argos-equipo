@@ -1,0 +1,52 @@
+# Preguntas pendientes para seguir el desarrollo
+
+21-oct-2026. Una sola lista para resolver todo de una vez. Cada pregunta dice qué decisión desbloquea y qué proponemos si la respuesta es "como ustedes vean".
+
+## A. Profesor de hardware y comunicaciones (Avance 2)
+
+| #   | Pregunta                                                                                                                                                                                                               | Qué desbloquea                                             | Nuestra propuesta                                                                                                        |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| A1  | ¿Cuenta como actuador de cada integrante el **LED rojo** que reacciona a su sensor? ¿El LED verde (indicador de conexión) también cuenta o no?                                                                         | REQ-A2-04 y el "1 sensor + 1 actuador por integrante"      | Rojo = actuador; verde = indicador de estado. Buzzer como actuador extra del `dht`                                       |
+| A2  | ¿Aceptan **3 cajas**, con dos NodeMCU independientes compartiendo protoboard y fuente de 5 V, en lugar de 5 cajas?                                                                                                     | Arquitectura física del Avance 2 (difiere del Avance 1)    | Sí: siguen siendo 5 microcontroladores con su sensor, su actuador y su usuario MQTT; el 3.3 V de cada placa nunca se une |
+| A3  | Para el presupuesto energético, ¿basta con hojas de datos y medición con multímetro, o piden un medidor USB?                                                                                                           | REQ-A2-05                                                  | Hojas de datos + multímetro en serie (prueba P-05)                                                                       |
+| A4  | ¿Es válido alimentar todo por red, sin batería ni deep sleep? El nodo `dht` debe avisar en todo momento                                                                                                                | REQ-A2-05 ("operar de manera autónoma cuando corresponda") | Sí, con justificación: es monitoreo continuo en un cuarto con contactos                                                  |
+| A5  | Todavía no flasheamos: ¿qué evidencias aceptan por ahora? Tenemos compilación de los 6 firmwares, chequeo automático de las conexiones de la protoboard, 21 pruebas en PC de las reglas del buzzer y un simulador MQTT | REQ-A2-06                                                  | Presentarlas como validación preliminar y fijar fecha para la prueba en hardware                                         |
+| A6  | ¿Hace falta una simulación formal? Wokwi y Tinkercad no tienen ESP8266 y no vemos uso para Gazebo ni MATLAB (no hay robot ni lazo de control)                                                                          | Alcance de pruebas                                         | Pruebas en PC de la lógica + simulador de los 5 nodos por MQTT                                                           |
+| A7  | ¿Es obligatorio TLS en MQTT para la entrega, o basta usuario/contraseña por nodo con ACL?                                                                                                                              | Despliegue                                                 | Usuario y ACL primero; TLS al final si da tiempo                                                                         |
+| A8  | ¿Podemos dejar instaladas las piezas del kit (NodeMCU, MB-102) en el cuarto al entregar, o se devuelven?                                                                                                               | Instalación final con los encargados                       | Pedir permiso para dejarlas                                                                                              |
+| A9  | ¿Nueva fecha para el Avance 2 de hardware, dado el cambio a 3 cajas?                                                                                                                                                   | Planeación                                                 | —                                                                                                                        |
+
+## B. Profesor de software y bases de datos
+
+| #   | Pregunta                                                                                                                                                     | Qué desbloquea                                              | Nuestra propuesta                                                                                                                                                                     |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| B1  | La semana 6 pide "Creación de Web API". Si usamos **n8n** (webhooks y flujos) sin una API propia, ¿cuenta?                                                   | Arquitectura de la Etapa 3 (decisión 21-oct: API de consulta con webhooks de n8n; ver `api.md`) | Exponer en n8n 2–3 webhooks de consulta (último valor, historial, alertas) como "Web API"                                                                                             |
+| B2  | "Conexión entre la interfaz de Arduino y el NodeMCU": ¿exige Arduino IDE o vale PlatformIO? Es el mismo código C++ con el framework Arduino                  | Herramienta de cada integrante                              | Ambos: PlatformIO principal y sketches generados para Arduino IDE                                                                                                                     |
+| B3  | El LED rojo lo decide el nodo y el contrato MQTT no publica su estado. ¿Basta con que n8n registre la acción deducida del evento, o el nodo debe reportarla? | Tabla AccionControl (`origen = 'local'`)                    | Deducirla en n8n; si piden reporte, agregar el estado del LED al evento (cambio de contrato, lo hacemos solo si lo piden)                                                             |
+| B4  | ¿Entregamos de nuevo la Etapa 2 de software actualizada (Caja, LED como actuador), o basta reflejarla en el siguiente avance?                                | Entregas                                                    | Adjuntar `docs/bd/etapa2_software_v2.md` como anexo                                                                                                                                   |
+| B5  | ¿Qué cuenta como "5 indicadores distintos"?                                                                                                                  | Dashboard (Etapa 4)                                         | % del tiempo en rango de T, % en rango de HR, horas de luz contra el fotoperiodo, accesos fuera de horario por día, golpes y aperturas de puerta por día, disponibilidad de cada nodo |
+| B6  | ¿Se permite el servidor en Oracle Cloud (Always Free) o debe correr en infraestructura del Tec?                                                              | Despliegue                                                  | Laptop primero; Oracle Cloud después                                                                                                                                                  |
+
+## C. Encargados del invernadero (Ing. Enrique Puga, Dr. Luis Ricardo Salgado)
+
+| # | Pregunta | Para qué |
+|---|---|---|
+| C1 | ¿Cuál es el horario de encendido y apagado de las lámparas (fotoperiodo)? | Alerta de luz (RF03) y `horario_lamparas` |
+| C2 | ¿Cuál es el horario autorizado de acceso al cuarto? | Movimiento fuera de horario (RF01) |
+| C3 | WiFi del invernadero: ¿tipo de autenticación (WPA2 con contraseña o empresarial)? ¿Hay que registrar las MAC? ¿Está permitido el puerto 1883 u 8883 de salida? | Si el ESP8266 puede conectarse (no soporta WPA2-Enterprise con facilidad) |
+| C4 | ¿Autorizan la pantalla en el nodo `dht` y que suene un buzzer dentro del cuarto? ¿Hay alguien cerca que lo escuche? | Variante con OLED y utilidad de la alarma local |
+| C5 | ¿Podemos atornillar a la pared y al anaquel, o solo usar fijación removible (cinta, cinchos)? | Soportes impresos |
+| C6 | ¿Hay contactos cerca del anaquel y de la puerta? Necesitamos 3 fuentes de 5 V | Ubicación de las cajas |
+| C7 | ¿Qué espesor tiene la repisa del anaquel? (usamos 18 mm de supuesto) | Pinza del anaquel |
+| C8 | ¿Quién debe recibir los avisos por WhatsApp y Telegram? | Canales de notificación |
+| C9 | ¿Cuánto tiempo con la puerta abierta ya es un problema? (proponemos 2 min) | `puerta_abierta_max_s` |
+| C10 | ¿Qué golpes importan: un portazo, mover el anaquel, una caída de frascos? | Calibración de `umbral_golpe_g` |
+| C11 | ¿El cuarto ya tiene un termohigrómetro de referencia? Si no, ¿nos prestan uno? | Calibración del DHT22 |
+| C12 | ¿Con qué limpian el cuarto (alcohol al 70 %, cloro)? | Material y acabado de las cajas |
+
+## D. Lo que resolvemos nosotros (no hace falta preguntar)
+
+- Medir con calibrador: NodeMCU (variante Amica o LoLin), OLED, DHT22, KY-012 y su pinout, GY-61, ADS1115, MC-38 y su distancia de cierre, HC-SR501, botón, LED, LDR y el modelo de protoboard. Al medir, se cambia `cad/medidas.json` y se corre `python regenerar.py --cad`.
+- Revisar con multímetro que el riel de 3.3 V de cada MB-102 esté partido a la mitad.
+- Prueba de la LDR con la lámpara (`docs/prueba_ldr.md`) para elegir difusor, R2 y umbral.
+- Presupuesto: el escenario B queda en ≈ $1,573. Con sílica reciclada y sin repuestos baja a ≈ $1,496, dentro del tope.

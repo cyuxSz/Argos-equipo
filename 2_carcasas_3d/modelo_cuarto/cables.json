@@ -1,0 +1,119 @@
+{
+  "supuestos": {
+    "puerta_a_anaquel": 2500.0,
+    "contacto_puerta": [
+      300.0,
+      300.0
+    ],
+    "puerta_ancho": 900.0,
+    "puerta_alto": 2100.0,
+    "puerta_bisagra": "y_min",
+    "techo": 2700.0,
+    "minisplit": [
+      800.0,
+      200.0,
+      300.0
+    ],
+    "minisplit_sobre_anaquel": 550.0,
+    "planchas_z": {
+      "1": 1800.0,
+      "2": 1400.0,
+      "3": 1000.0,
+      "4": 600.0
+    },
+    "plancha_espesor": 30.0,
+    "poste": 30.0,
+    "lum_diam": 30.0,
+    "lum_largo": 610.0,
+    "lum_x": [
+      460.0,
+      1380.0
+    ]
+  },
+  "cajas": {
+    "dht": "Anaquel B, cara del pasillo, a media longitud, altura de frascos de la plancha 3",
+    "anaquel": "Anaquel A, bajo el borde de la plancha 2, cerca del fondo (acel fijo al anaquel; LDR a la luminaria de la plancha 3)",
+    "entrada": "Pared de la puerta, junto a la chapa; el PIR mira al cuarto y el MC-38 va al marco",
+    "potencia": "Opcional: junto a la estacion del anaquel"
+  },
+  "cables": [
+    {
+      "cable": "Fuente 5 V -> estacion del anaquel (USB-C)",
+      "ruta_cm": 110,
+      "comprar_cm": 132,
+      "tipo": "USB-C"
+    },
+    {
+      "cable": "Fuente 5 V -> dht (micro-USB)",
+      "ruta_cm": 197,
+      "comprar_cm": 236,
+      "tipo": "micro-USB"
+    },
+    {
+      "cable": "Fuente 5 V (contacto junto a la puerta) -> estacion de entrada (USB-C)",
+      "ruta_cm": 134,
+      "comprar_cm": 161,
+      "tipo": "USB-C"
+    },
+    {
+      "cable": "LDR (capuchon) -> estacion del anaquel",
+      "ruta_cm": 8,
+      "comprar_cm": 10,
+      "tipo": "2 hilos"
+    },
+    {
+      "cable": "MC-38 (marco) -> estacion de entrada",
+      "ruta_cm": 14,
+      "comprar_cm": 17,
+      "tipo": "2 hilos"
+    },
+    {
+      "cable": "Opcional: senal estacion -> caja de potencia",
+      "ruta_cm": 32,
+      "comprar_cm": 38,
+      "tipo": "6 hilos Dupont"
+    },
+    {
+      "cable": "Opcional: PARED -> caja de potencia",
+      "ruta_cm": 142,
+      "comprar_cm": 170,
+      "tipo": "clavija 127 V"
+    },
+    {
+      "cable": "Opcional: P2 -> luminarias plancha 2, anaquel A",
+      "ruta_cm": 79,
+      "comprar_cm": 95,
+      "tipo": "extension 127 V"
+    },
+    {
+      "cable": "Opcional: P2 -> luminarias plancha 2, anaquel B (cruza por arriba)",
+      "ruta_cm": 237,
+      "comprar_cm": 284,
+      "tipo": "extension 127 V"
+    },
+    {
+      "cable": "Opcional: P3 -> luminarias plancha 3, anaquel A",
+      "ruta_cm": 39,
+      "comprar_cm": 47,
+      "tipo": "extension 127 V"
+    },
+    {
+      "cable": "Opcional: P3 -> luminarias plancha 3, anaquel B (cruza por arriba)",
+      "ruta_cm": 277,
+      "comprar_cm": 332,
+      "tipo": "extension 127 V"
+    },
+    {
+      "cable": "Opcional: P4 -> luminarias plancha 4, anaquel A",
+      "ruta_cm": 69,
+      "comprar_cm": 83,
+      "tipo": "extension 127 V"
+    },
+    {
+      "cable": "Opcional: P4 -> luminarias plancha 4, anaquel B (cruza por arriba)",
+      "ruta_cm": 317,
+      "comprar_cm": 380,
+      "tipo": "extension 127 V"
+    }
+  ]
+}

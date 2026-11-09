@@ -1,0 +1,26 @@
+# "topic read X" = puede suscribirse a X; "topic write X" = puede publicar en X.
+# Las lineas topic aplican al ultimo "user" que las precede.
+
+user n8n
+topic read invernadero/#
+topic write invernadero/cmd/alarma
+topic write invernadero/alertas
+
+# La API: lee el estado (LWT online/offline) y ordena la alarma / anuncia alertas
+user api
+topic read invernadero/estado/#
+topic write invernadero/cmd/alarma
+topic write invernadero/alertas
+
+user dashboard
+topic read invernadero/#
+
+user dht
+topic read invernadero/cmd/alarma
+topic write invernadero/cmd/silenciar
+
+# "pattern" vale para TODOS los usuarios; %u es el nombre con el que se conecto.
+# Quien entra como "pir" solo escribe en invernadero/{telemetria,evento,estado}/pir.
+pattern write invernadero/telemetria/%u
+pattern write invernadero/evento/%u
+pattern write invernadero/estado/%u

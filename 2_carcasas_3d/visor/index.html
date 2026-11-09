@@ -1,0 +1,830 @@
+<title>Prototipo Argos</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: ficha técnica de laboratorio; columna de lectura con un visor 3D y un banco de simulación a lo ancho */
+:root {
+  --bg: #f2f5f3; --surface: #ffffff; --ink: #16201a; --muted: #56635b; --line: #d3dcd6;
+  --accent: #23704e; --accent-soft: #e2efe8; --alert: #b3402b; --alert-soft: #f8e5e0;
+  --screen: #0a0e0c; --screen-ink: #e9f6ee; --led-g: #2fbf62; --led-r: #e0442c; --led-off: #c9d1cc;
+  --display: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --viewer-bg: #e7ece9;
+  /* capas del gemelo: mismos colores que los cortes acotados (cad/niveles.py) */
+  --c-carcasa: #c9cec9; --c-protoboard: #f4efe2; --c-placa: #3b6ea5; --c-modulos: #3f8a5f; --c-cables: #6b6b6b;
+  --lamina: #ffffff; --lamina-ink: #56635b;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0e1311; --surface: #151c18; --ink: #e4ebe6; --muted: #9aa8a0; --line: #2a352f;
+  --accent: #62c493; --accent-soft: #1b2c23; --alert: #f0806a; --alert-soft: #3a211b;
+  --led-off: #3a4540; --viewer-bg: #1a221e; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0e1311; --surface: #151c18; --ink: #e4ebe6; --muted: #9aa8a0; --line: #2a352f;
+  --accent: #62c493; --accent-soft: #1b2c23; --alert: #f0806a; --alert-soft: #3a211b;
+  --led-off: #3a4540; --viewer-bg: #1a221e; color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--body); }
+.envoltura { max-width: 1120px; margin: 0 auto; padding-block: 28px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 48px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 600; text-wrap: balance; margin: 0; letter-spacing: 0.005em; }
+h1 { font-size: clamp(30px, 5vw, 46px); line-height: 1.05; }
+h2 { font-size: 26px; line-height: 1.15; }
+h3 { font-size: 18px; }
+p { margin: 0; max-width: 68ch; }
+.eti { font: 500 11.5px/1.2 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+section { display: grid; gap: 18px; }
+.cab { display: grid; gap: 14px; }
+.aviso { display: flex; gap: 12px; align-items: flex-start; border: 1px solid var(--line); background: var(--surface);
+  padding: 12px 14px; border-radius: 6px; max-width: 760px; }
+.aviso b { color: var(--alert); font-weight: 600; }
+.chip { display: inline-block; font: 500 12px/1 var(--mono); padding: 5px 8px; border-radius: 99px;
+  background: var(--accent-soft); color: var(--accent); }
+
+/* visor */
+.visor { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 0; border: 1px solid var(--line);
+  border-radius: 8px; overflow: hidden; background: var(--surface); }
+.lienzo { position: relative; background: var(--viewer-bg); aspect-ratio: 4 / 3; max-width: 100%; min-height: 320px; }
+.lienzo canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+.lienzo .estado { position: absolute; left: 12px; bottom: 10px; font: 12px var(--mono); color: var(--muted); }
+.panel { padding: 18px; display: grid; gap: 16px; align-content: start; border-left: 1px solid var(--line); min-width: 0; }
+.selector { display: flex; flex-wrap: wrap; gap: 6px; }
+button { font: 500 13px/1 var(--body); color: var(--ink); background: var(--surface); border: 1px solid var(--line);
+  border-radius: 6px; padding: 9px 11px; cursor: pointer; }
+button:hover { border-color: var(--accent); }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.ficha dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 0; }
+.ficha dt { color: var(--muted); font-size: 13px; }
+.ficha dd { margin: 0; font-size: 14px; min-width: 0; }
+.acciones { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* simulacion */
+.banco { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.1fr); gap: 16px; }
+.caja { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px; display: grid;
+  gap: 14px; align-content: start; min-width: 0; }
+.frente { display: grid; justify-items: center; gap: 14px; padding: 18px 12px; background: var(--viewer-bg); border-radius: 6px; }
+.leds { display: flex; gap: 22px; align-items: center; }
+.led { width: 16px; height: 16px; border-radius: 50%; background: var(--led-off); box-shadow: inset 0 -2px 3px rgba(0,0,0,0.25); }
+.led.v.on { background: var(--led-g); box-shadow: 0 0 12px var(--led-g); }
+.led.r.on { background: var(--led-r); box-shadow: 0 0 12px var(--led-r); }
+.ventana { background: var(--screen); padding: 8px; border-radius: 4px; width: min(280px, 100%); }
+.ventana canvas { width: 100%; image-rendering: pixelated; display: block; }
+.zumb { font: 500 13px var(--mono); padding: 6px 10px; border-radius: 4px; background: var(--line); color: var(--muted); }
+.zumb.on { background: var(--alert-soft); color: var(--alert); }
+.control { display: grid; gap: 6px; }
+.control label { display: flex; justify-content: space-between; font-size: 13.5px; }
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+.rango { font: 12px var(--mono); color: var(--muted); }
+.interruptor { display: flex; gap: 10px; align-items: center; font-size: 13.5px; }
+.interruptor input { width: 18px; height: 18px; accent-color: var(--accent); }
+.reloj { font: 500 22px var(--mono); font-variant-numeric: tabular-nums; }
+.bitacora { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; max-height: 300px; overflow-y: auto;
+  font-size: 13.5px; }
+.bitacora li { display: grid; grid-template-columns: 56px 1fr; gap: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+.bitacora .h { font: 12px var(--mono); color: var(--muted); padding-top: 2px; }
+.bitacora .alerta { color: var(--alert); }
+.bitacora .ok { color: var(--accent); }
+.leyenda { display: grid; grid-template-columns: auto 1fr; gap: 6px 10px; font-size: 13px; align-items: center; }
+
+/* ubicacion */
+.plano { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+.plano .dibujo { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px; overflow-x: auto; }
+.plano svg { width: 100%; min-width: 420px; height: auto; display: block; }
+.plano svg text { font-family: var(--mono); font-size: 11px; fill: var(--muted); }
+.plano svg .nodo-t { fill: var(--ink); font-weight: 500; }
+.lista-nodos { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.lista-nodos li { display: grid; grid-template-columns: 74px 1fr; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); }
+.lista-nodos b { font: 600 14px var(--mono); color: var(--accent); }
+
+/* aprobaciones */
+.aprob { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; counter-reset: q; }
+.aprob article { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; display: grid; gap: 6px; }
+.aprob h3 { font-size: 16.5px; }
+.aprob .por { font-size: 13px; color: var(--muted); }
+
+.esquema { margin: 0; background: #ffffff; border: 1px solid var(--line); border-radius: 8px; padding: 12px; overflow-x: auto; }
+.esquema img { display: block; width: 100%; min-width: 520px; height: auto; }
+.esquema.alta img { max-width: 680px; min-width: 0; margin: 0 auto; }
+.galeria { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.galeria figure { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.galeria img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: contain; background: #ffffff; }
+.galeria figcaption { padding: 10px 12px; font-size: 13px; color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips button { font: 500 12px/1 var(--mono); padding: 7px 9px; }
+.capas { border: 0; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 12px; }
+.capas legend { margin-bottom: 8px; }
+.capas label { display: flex; align-items: center; gap: 8px; font-size: 13.5px; }
+.capas input { width: 16px; height: 16px; accent-color: var(--accent); margin: 0; }
+.mues { width: 12px; height: 12px; border-radius: 2px; border: 1px solid var(--muted); flex: none; }
+.lamina { margin: 0; background: var(--lamina); border: 1px solid var(--line); border-radius: 8px; padding: 12px; overflow-x: auto; }
+.lamina img { display: block; width: 100%; min-width: 640px; height: auto; }
+.lamina.estrecha img { max-width: 760px; min-width: 0; margin: 0 auto; }
+.lamina figcaption { font-size: 13px; color: var(--lamina-ink); padding-top: 8px; }
+.barra { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; }
+.galeria.cinco { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 6px; }
+
+@media (min-width: 901px) {
+  .lienzo { aspect-ratio: auto; height: 100%; min-height: 460px; }
+  .lienzo canvas { position: absolute; inset: 0; }
+}
+@media (max-width: 900px) {
+  .visor, .plano { grid-template-columns: minmax(0, 1fr); }
+  .panel { border-left: 0; border-top: 1px solid var(--line); }
+  .banco { grid-template-columns: minmax(0, 1fr); }
+  .aprob, .galeria { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="envoltura">
+  <header class="cab">
+    <span class="eti">Equipo G507 · TC1004B · Invernadero Académico</span>
+    <h1>Argos: prototipo digital de los cinco nodos en tres cajas</h1>
+    <p>Así se verían y se comportarían los sensores que proponemos instalar en el cuarto de incubación in vitro. El sistema <strong>solo vigila y avisa</strong>: no toca el minisplit ni las lámparas. Lo único que hace cada nodo es encender su LED rojo cuando su sensor detecta algo, y el de temperatura además hace sonar una alarma.</p>
+    <div class="aviso" role="note"><span class="chip">Borrador</span><p><b>Medidas supuestas.</b> Las cajas se dibujaron con medidas típicas de los componentes; todavía no medimos las piezas reales ni imprimimos nada. Antes de fabricar queremos su visto bueno sobre lo que se ve aquí: forma, tamaño, ubicación, fijación y comportamiento.</p></div>
+    <div class="aviso" role="note"><span class="chip">22 oct</span><p><b>Actualización.</b> Los profesores confirmaron que los cinco microcontroladores son obligatorios, así que se mantienen las tres cajas impresas. Se revisaron otras formas de hacer las cajas y el presupuesto con precios de tiendas; el resumen está en la sección 9.</p></div>
+  </header>
+
+  <section aria-labelledby="t-visor">
+    <div class="cab"><span class="eti">1 · Las cajas</span><h2 id="t-visor">Cinco nodos, tres cajas</h2>
+      <p>Son cinco microcontroladores independientes, uno por integrante, cada uno con su sensor, su alarma o sus luces y su propia conexión. Los que van juntos en el cuarto comparten caja y fuente de 5 V: la <strong>estación de entrada</strong> (accesos + puerta) y la <strong>estación del anaquel</strong> (golpes + luz). El de temperatura va solo para que el calor de la electrónica no altere su lectura. Arrastra para girar y usa la rueda o dos dedos para acercar.</p></div>
+    <div class="visor">
+      <div class="lienzo" id="lienzo"><span class="estado" id="estado3d">Cargando modelos…</span></div>
+      <div class="panel">
+        <div class="selector" role="group" aria-label="Elegir nodo">
+          <button type="button" data-nodo="todos" aria-pressed="true">Todos</button>
+          <button type="button" data-nodo="dht" aria-pressed="false">Temperatura</button>
+          <button type="button" data-nodo="entrada" aria-pressed="false">Estación de entrada</button>
+          <button type="button" data-nodo="anaquel" aria-pressed="false">Estación del anaquel</button>
+          <button type="button" data-nodo="accesorios" aria-pressed="false">Capuchón y portas</button>
+        </div>
+        <div class="ficha" id="ficha" aria-live="polite"></div>
+        <div class="control"><label for="r-expl"><span>Ensamble: separar piezas</span><span class="mono" id="v-expl">cerrado</span></label>
+          <input type="range" id="r-expl" min="0" max="100" step="1" value="0"></div>
+        <div class="control"><label for="r-corte"><span>Nivel de corte (desde el frente)</span><span class="mono" id="v-corte">sin corte</span></label>
+          <input type="range" id="r-corte" min="0" max="100" step="0.5" value="100">
+          <div class="chips" role="group" aria-label="Niveles de los cortes acotados" id="chips-nivel"></div></div>
+        <fieldset class="capas"><legend class="eti">Capas visibles</legend>
+          <label for="c-carcasa"><input type="checkbox" id="c-carcasa" data-capa="carcasa" checked><span class="mues" style="background: var(--c-carcasa)"></span>Carcasa</label>
+          <label for="c-protoboard"><input type="checkbox" id="c-protoboard" data-capa="protoboard" checked><span class="mues" style="background: var(--c-protoboard)"></span>Protoboard</label>
+          <label for="c-placa"><input type="checkbox" id="c-placa" data-capa="placa" checked><span class="mues" style="background: var(--c-placa)"></span>NodeMCU</label>
+          <label for="c-modulos"><input type="checkbox" id="c-modulos" data-capa="modulos" checked><span class="mues" style="background: var(--c-modulos)"></span>Sensores y módulos</label>
+          <label for="c-cables"><input type="checkbox" id="c-cables" data-capa="cables" checked><span class="mues" style="background: var(--c-cables)"></span>Cables</label>
+        </fieldset>
+        <div class="acciones">
+          <button type="button" id="btn-giro" aria-pressed="true">Giro automático</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-niveles">
+    <div class="cab"><span class="eti">2 · Por dentro</span><h2 id="t-niveles">Cortes acotados por niveles</h2>
+      <p>Cada caja cortada en cinco planos paralelos al frente, de la espalda hacia afuera: N1 el piso con la protoboard, N2 las placas, N3 los conectores, N4 lo que queda bajo la tapa y N5 el frente con sus ventanas y luces. A la derecha, un corte de lado marca dónde cae cada nivel. Son los mismos niveles del visor de arriba. Medidas en mm, todavía supuestas.</p></div>
+    <div class="barra">
+      <div class="selector" role="group" aria-label="Elegir caja para los cortes">
+        <button type="button" data-lam-caja="dht" aria-pressed="true">Temperatura</button>
+        <button type="button" data-lam-caja="entrada" aria-pressed="false">Estación de entrada</button>
+        <button type="button" data-lam-caja="anaquel" aria-pressed="false">Estación del anaquel</button>
+      </div>
+      <div class="selector" role="group" aria-label="Elegir tipo de vista">
+        <button type="button" data-lam-tipo="niveles" aria-pressed="true">Cortes por niveles</button>
+        <button type="button" data-lam-tipo="vistas" aria-pressed="false">Vistas exteriores</button>
+      </div>
+    </div>
+    <figure class="lamina"><img id="img-lam" src="img/niveles_dht.png" alt="Cortes por niveles del nodo de temperatura, con cotas en mm"><figcaption id="cap-lam">Gris: carcasa impresa. Crema: protoboard. Azul: NodeMCU. Verde: sensores y componentes. Gris oscuro: conectores. Naranja: LED.</figcaption></figure>
+  </section>
+
+  <section aria-labelledby="t-acc">
+    <div class="cab"><span class="eti">3 · Piezas aparte</span><h2 id="t-acc">Capuchón de la fotorresistencia y guías del sensor de puerta</h2>
+      <p>Dos sensores van fuera de su caja, unidos por cable. La <strong>fotorresistencia</strong> va dentro de un capuchón negro junto a la lámpara: solo entra luz por una ventana de 4.5 mm con un disco difusor blanco, y una visera bloquea la luz lateral del cuarto. Una horquilla permite apuntarlo a la lámpara. El <strong>sensor de puerta</strong> va en el marco y su imán en la hoja, cada uno en una guía impresa que lo retiene con un clic. Las ranuras permiten ajustar ±3 mm la separación. En el visor de arriba, elige «Capuchón y portas» para verlos armados.</p></div>
+    <div class="galeria cinco">
+      <figure><img src="img/capuchon_ldr_iso.png" alt="Capuchón de la fotorresistencia con su oreja de pivote" loading="lazy"><figcaption>Capuchón: cuerpo opaco de 16 × 26 mm, visera al frente y oreja para un tornillo M3.</figcaption></figure>
+      <figure><img src="img/capuchon_ldr_corte.png" alt="Corte del capuchón con la fotorresistencia, el cable y el difusor" loading="lazy"><figcaption>Corte: la fotorresistencia (amarillo) apoya en la ventana; el difusor (azul) va al frente.</figcaption></figure>
+      <figure><img src="img/soporte_ldr_iso.png" alt="Horquilla de montaje del capuchón" loading="lazy"><figcaption>Horquilla: 2 tornillos o 2 cinchos junto a la lámpara; el capuchón gira de −90° a +75°.</figcaption></figure>
+      <figure><img src="img/porta_iman_iso.png" alt="Guía impresa para el imán del sensor de puerta" loading="lazy"><figcaption>Guía del imán: va en la hoja de la puerta, con cinta doble cara o 2 tornillos.</figcaption></figure>
+      <figure><img src="img/porta_sensor_iso.png" alt="Guía impresa para el sensor magnético, con salida de cable" loading="lazy"><figcaption>Guía del sensor: va en el marco; el cable sale por un costado hacia la estación.</figcaption></figure>
+      <figure><img src="img/nodo_dht_explosionada.png" alt="Vista explosionada del nodo de temperatura" loading="lazy"><figcaption>Así se arma una caja: base, insertos, electrónica, tapa y 4 tornillos.</figcaption></figure>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-sim">
+    <div class="cab"><span class="eti">4 · Cómo se comporta</span><h2 id="t-sim">Simulación del nodo de temperatura y humedad</h2>
+      <p>Mueve las condiciones del cuarto y avanza el tiempo. Cada lectura equivale a 30 segundos. Los rangos son los que ustedes nos dieron: <span class="mono">22–28 °C</span> y <span class="mono">40–60 % HR</span>. Para evitar falsas alarmas, el nodo exige 3 lecturas seguidas fuera de rango antes de avisar, y 3 lecturas ya dentro con margen para dar por normalizado.</p></div>
+    <div class="banco">
+      <div class="caja">
+        <span class="eti">Frente del nodo</span>
+        <div class="frente">
+          <div class="leds" aria-label="LED de estado"><span class="led v" id="led-v" title="LED verde"></span><span class="led r" id="led-r" title="LED rojo"></span></div>
+          <div class="ventana"><canvas id="oled" width="128" height="64" aria-label="Pantalla del nodo"></canvas></div>
+          <span class="zumb" id="zumb">Alarma callada</span>
+        </div>
+        <div class="leyenda">
+          <span class="led v on"></span><span>Verde fijo: en línea y funcionando</span>
+          <span class="led v"></span><span>Verde parpadeando: sin red (la alarma sigue)</span>
+          <span class="led r on"></span><span>Rojo fijo: temperatura o humedad fuera de rango</span>
+          <span class="led r"></span><span>Rojo parpadeo rápido: falla del sensor</span>
+        </div>
+      </div>
+      <div class="caja">
+        <span class="eti">Condiciones del cuarto</span>
+        <div class="control"><label for="r-t"><span>Temperatura real</span><span class="mono" id="v-t">25.0 °C</span></label>
+          <input type="range" id="r-t" min="15" max="35" step="0.1" value="25"><span class="rango">Rango permitido 22–28 °C</span></div>
+        <div class="control"><label for="r-h"><span>Humedad real</span><span class="mono" id="v-h">50 %</span></label>
+          <input type="range" id="r-h" min="20" max="85" step="1" value="50"><span class="rango">Rango permitido 40–60 %</span></div>
+        <label class="interruptor" for="s-red"><input type="checkbox" id="s-red">Simular caída del WiFi</label>
+        <label class="interruptor" for="s-sensor"><input type="checkbox" id="s-sensor">Simular sensor desconectado</label>
+        <div class="acciones">
+          <button type="button" id="b-paso">Avanzar 1 lectura</button>
+          <button type="button" id="b-auto" aria-pressed="false">Avanzar solo</button>
+          <button type="button" id="b-silencio">Botón: silenciar 30 min</button>
+          <button type="button" id="b-reinicio">Reiniciar</button>
+        </div>
+        <div><span class="eti">Hora simulada</span><div class="reloj" id="reloj">09:00:00</div></div>
+      </div>
+      <div class="caja">
+        <span class="eti">Lo que reciben ustedes</span>
+        <ul class="bitacora" id="bitacora" aria-live="polite"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-circ">
+    <div class="cab"><span class="eti">5 · Circuitos</span><h2 id="t-circ">Esquemáticos, protoboard y cableado</h2>
+      <p>Hay un esquemático por microcontrolador; en las estaciones, dos de ellos comparten protoboard, caja y fuente de 5 V, pero sus circuitos no se tocan. Las cinco placas usan la misma base: NodeMCU (ESP8266), capacitor C1 de 220 µF en la entrada de 5 V, y LED verde (D7) y rojo (D8) con resistencias de 330 Ω. El LED rojo de cada una reacciona a su sensor. Ningún sensor manda más de 3.3 V a la placa; el único elemento a 5 V, la alarma, se activa a través de un transistor.</p></div>
+    <div class="barra">
+      <div class="selector" role="group" aria-label="Elegir tipo de dibujo">
+        <button type="button" data-circ-tipo="esq" aria-pressed="true">Esquemático</button>
+        <button type="button" data-circ-tipo="proto" aria-pressed="false">Armado en protoboard</button>
+        <button type="button" data-circ-tipo="cable" aria-pressed="false">Cableado</button>
+      </div>
+      <div class="selector" role="group" aria-label="Elegir nodo o caja" id="circ-elem"></div>
+    </div>
+    <figure class="esquema"><img id="img-esq" src="esquematicos/nodo_dht.svg" alt="Esquemático del nodo de temperatura y humedad"></figure>
+    <p class="rango" id="nota-circ">Un esquemático por microcontrolador.</p>
+  </section>
+
+  <section aria-labelledby="t-plano">
+    <div class="cab"><span class="eti">6 · Dónde van</span><h2 id="t-plano">Ubicación propuesta en el cuarto</h2>
+      <p>El esquema no está a escala. Las posiciones son una propuesta y las confirmaríamos con ustedes en la visita. Cada caja usa una fuente de 5 V conectada a un contacto del cuarto: tres fuentes en total. En las estaciones, las dos placas comparten la fuente.</p></div>
+    <div class="plano">
+      <div class="dibujo">
+        <svg viewBox="0 0 600 380" role="img" aria-label="Plano esquemático del cuarto con la ubicación de los cinco nodos">
+          <rect x="20" y="20" width="560" height="330" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--ink)"/>
+          <!-- puerta -->
+          <rect x="60" y="342" width="70" height="16" fill="var(--bg)"/>
+          <path d="M60 350 A70 70 0 0 1 130 280" fill="none" stroke="var(--muted)" stroke-dasharray="4 4"/>
+          <line x1="60" y1="350" x2="60" y2="280" stroke="var(--muted)" stroke-width="2"/>
+          <text x="66" y="372">entrada</text>
+          <!-- minisplit -->
+          <rect x="420" y="22" width="120" height="16" fill="var(--line)"/>
+          <text x="430" y="54">minisplit (existente)</text>
+          <!-- anaqueles -->
+          <rect x="200" y="150" width="300" height="46" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="210" y="142">anaquel con frascos</text>
+          <line x1="215" y1="160" x2="485" y2="160" stroke="var(--accent)" stroke-dasharray="10 6"/>
+          <text x="360" y="214">lámparas sobre cada repisa</text>
+          <!-- nodos -->
+          <g><circle cx="300" cy="196" r="9" fill="var(--accent)"/><text class="nodo-t" x="282" y="232">dht</text></g>
+          <g><rect x="446" y="190" width="50" height="16" rx="3" fill="var(--accent)"/><text class="nodo-t" x="440" y="232">acel + luz</text></g>
+          <line x1="470" y1="190" x2="440" y2="162" stroke="var(--accent)" stroke-dasharray="3 3"/>
+          <circle cx="440" cy="160" r="5" fill="none" stroke="var(--accent)" stroke-width="2"/><text x="448" y="150">LDR</text>
+          <g><rect x="24" y="266" width="50" height="16" rx="3" fill="var(--accent)"/><text class="nodo-t" x="82" y="278">pir + puerta · 2 m</text></g>
+          <line x1="49" y1="282" x2="60" y2="342" stroke="var(--accent)" stroke-dasharray="3 3"/><text x="66" y="334">MC-38</text>
+        </svg>
+      </div>
+      <ul class="lista-nodos">
+        <li><b>dht</b><span>Temperatura y humedad. Colgado del borde de una repisa o en la pared, <strong>a la altura de los frascos</strong>, lejos del minisplit y de las lámparas. Lleva la pantalla y la alarma.</span></li>
+        <li><b>anaquel</b><span>Estación con dos nodos. <strong>acel</strong>: golpes o vibraciones, por eso la caja va rígida a la estructura del anaquel. <strong>luz</strong>: fotoperiodo; su fotorresistencia sale por un cable a un capuchón negro, orientable, junto a las lámparas.</span></li>
+        <li><b>entrada</b><span>Estación con dos nodos junto a la puerta, a unos 2 m. <strong>pir</strong> registra movimiento y avisa si ocurre fuera del horario de lunes a viernes de 8:00 a 17:00. <strong>puerta</strong> avisa si queda abierta: un sensor magnético va en el marco (por cable) y un imán en la hoja, cada uno en su guía impresa.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-aprob">
+    <div class="cab"><span class="eti">7 · Lo que necesitamos de ustedes</span><h2 id="t-aprob">Puntos para su aprobación</h2></div>
+    <div class="aprob">
+      <article><h3>Pantalla en el nodo de temperatura</h3><p>Un indicador de 2.42" (área visible de 55 × 27.5 mm). Muestra a la vez la temperatura (dígitos de ≈ 11 mm), la humedad (≈ 7 mm) y una barra de estado: en línea, sin red, alarma o falla del sensor. La barra se invierte (fondo claro) cuando hay alarma, para notarla de lejos. Se apaga sola a los 30 s y se enciende con el botón. No es un actuador.</p><span class="por">El correo autorizaba solo una alarma: ¿podemos incluirla?</span></article>
+      <article><h3>Alarma sonora</h3><p>Suena solo si la temperatura o la humedad salen de rango. Funciona aunque se caiga el internet, y el botón la silencia 30 min sin detener los avisos.</p><span class="por">¿Hay restricción de volumen o de horario?</span></article>
+      <article><h3>Forma de fijar las cajas</h3><p>Pinza impresa que abraza la repisa (sin tornillos), o placa en la pared con 2 tornillos o tiras adhesivas removibles. El nodo de golpes necesita 2 tornillos o cinchos al anaquel.</p><span class="por">¿Qué fijación permiten en paredes y anaqueles?</span></article>
+      <article><h3>Ubicación de cada nodo</h3><p>Las posiciones del plano y la altura del nodo de temperatura respecto a los frascos.</p><span class="por">¿Coinciden con el uso diario del cuarto?</span></article>
+      <article><h3>Luces de estado</h3><p>Cada nodo tiene un LED verde (conectado) y uno rojo que reacciona a su sensor: movimiento o golpe, 5 s; puerta, mientras está abierta; luz, con las lámparas apagadas; temperatura, mientras hay alerta. Las estaciones tienen dos pares, rotulados por sensor. Brillo bajo, visibles a unos 3 m.</p><span class="por">¿Hay alguna restricción de luz por las plantas?</span></article>
+      <article><h3>Capuchón junto a la lámpara</h3><p>Una pieza negra de 16 × 26 mm con su horquilla, sujeta a la estructura de la lámpara con 2 cinchos o 2 tornillos. No toca la lámpara ni los frascos. Antes de fijarla mediríamos la luz con la lámpara encendida y apagada.</p><span class="por">¿Podemos sujetarla a la estructura de las lámparas?</span></article>
+      <article><h3>Guías del sensor de puerta</h3><p>Dos piezas de 51 × 18 × 12 mm: una en el marco y otra en la hoja, con cinta doble cara (removible) o 2 tornillos pequeños cada una. Quedan a unos 2 cm entre sí con la puerta cerrada.</p><span class="por">¿Se permite cinta o tornillos en el marco y la puerta?</span></article>
+      <article><h3>Limpieza y cables</h3><p>El PETG resiste el alcohol al 70 %. Cada caja necesita un contacto para su fuente de 5 V: uno junto al anaquel, uno junto a la puerta y uno para el nodo de temperatura.</p><span class="por">¿Usan cloro u otro desinfectante? ¿Hay contactos cerca del anaquel y de la puerta?</span></article>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-img">
+    <div class="cab"><span class="eti">8 · Detalle</span><h2 id="t-img">Cómo se arma y cómo quedaría</h2></div>
+    <div class="galeria">
+      <figure><img src="img/nodo_dht_explosionada.png" alt="Vista explosionada del nodo de temperatura: base, insertos, electrónica, pantalla, tapa y tornillos" loading="lazy"><figcaption>Se abre por el frente con 4 tornillos, sin descolgarla de la pared.</figcaption></figure>
+      <figure><img src="img/nodo_dht_escena_anaquel.png" alt="Esquema del nodo de temperatura colgado de una repisa con frascos debajo" loading="lazy"><figcaption>Escena esquemática: colgado de la repisa, a la altura de los frascos.</figcaption></figure>
+      <figure><img src="img/nodo_dht_vistas.png" alt="Vistas frontal, lateral y posterior del nodo de temperatura con cotas en milímetros" loading="lazy"><figcaption>Vistas acotadas en mm. El sensor va en una cámara aparte, abajo, aislada del calor de la electrónica.</figcaption></figure>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-avance">
+    <div class="cab"><span class="eti">9 · Avance</span><h2 id="t-avance">Qué está listo y qué sigue</h2>
+      <p>Actualizado el 22 de octubre de 2026. Nada se ha instalado ni conectado a una placa real todavía.</p></div>
+    <div class="aprob">
+      <article><h3>Revisado en computadora</h3><p>Los programas de los cinco nodos compilan. Un chequeo automático confirma que las conexiones de cada protoboard y los pines del programa coinciden con los esquemáticos. Las reglas de la alarma pasan 21 pruebas, y las cajas no tienen piezas que choquen entre sí.</p><span class="por">Validación preliminar, sin hardware</span></article>
+      <article><h3>Simulador de los cinco nodos</h3><p>Un programa envía por la red los mismos mensajes que mandarían los nodos: lecturas normales, calor, caída de un nodo y golpes. Con él armamos el servidor sin esperar al hardware.</p><span class="por">Falta probarlo con el servidor</span></article>
+      <article><h3>Base de datos, versión 2</h3><p>Registra las tres cajas, el LED rojo de cada nodo como actuador junto con la alarma, y las fallas de sensor. Guarda las mediciones 90 días.</p><span class="por">Falta probarla en el servidor</span></article>
+      <article><h3>Cinco microcontroladores confirmados</h3><p>Los profesores confirmaron que cada integrante debe tener su propio NodeMCU. Por eso se mantiene el arreglo de cinco placas en tres cajas, y se descartó juntar varios sensores en una sola placa.</p><span class="por">Sin cambios en el diseño</span></article>
+      <article><h3>Versiones del prototipo</h3><p><strong>v0</strong>: protoboards sin caja, funcionando con el servidor. <strong>v1</strong>: piezas de prueba pequeñas (ventana de la pantalla, cámara del sensor, capuchón, guía de la puerta). <strong>v2</strong>: las tres cajas completas. <strong>v3</strong>: instalación en el cuarto y ajustes.</p><span class="por">Propuesta del equipo para las próximas 6 semanas</span></article>
+      <article><h3>¿Y si no se imprime?</h3><p>Comparamos un gabinete comercial, una caja de registro de PVC, acrílico cortado con láser y dejar las protoboards sin caja. Ninguna da la cámara aislada del sensor de temperatura ni los soportes de la fotorresistencia y de la puerta, que habría que fabricar de todos modos. Se mantiene la impresión en PETG.</p><span class="por">Sin caja, solo como primer prototipo</span></article>
+      <article><h3>Presupuesto</h3><p>Con precios vistos en tiendas el 21 de octubre, el material extra suma ≈ $1,650 MXN, unos $150 arriba del tope de $1,500. Recoger el pedido en sucursal en lugar de pagar el envío y usar tuercas en lugar de insertos lo deja en ≈ $1,500 o menos.</p><span class="por">Falta confirmar precios y entregas en cada tienda</span></article>
+      <article><h3>Lo que sigue</h3><p>Levantar el servidor (mensajería, base de datos, flujos de aviso y la consulta del historial por la web), medir las piezas reales con calibrador, imprimir las pruebas de ajuste y probar la fotorresistencia junto a la lámpara.</p><span class="por">Necesitamos sus respuestas de la sección 7, el fotoperiodo, el horario de acceso y los datos del WiFi</span></article>
+    </div>
+  </section>
+
+  <footer>
+    <span>Argos · Equipo G507 · Tecnológico de Monterrey, campus Monterrey · Borrador actualizado el 22 de octubre de 2026.</span>
+    <span>Medidas supuestas, sin verificar contra piezas reales. Los avisos de la simulación (WhatsApp y Telegram) ilustran el diseño propuesto; el sistema aún no está instalado.</span>
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/STLLoader.js"></script>
+<script>
+"use strict";
+// ───────── datos de los nodos (salen de cad/nodos.py; medidas supuestas) ─────────
+const NODOS = {
+  dht:     { nombre: "Temperatura y humedad", id: "dht", H: 166.3, W: 80, conOrejas: "80 × 166 × 40.5 mm",
+             cuerpo: "80 × 138 × 40.5 mm", mide: "DHT22 en una cámara inferior aislada",
+             extra: "Pantalla 2.42\", botón y alarma sonora. Va vertical: es la caja más corta",
+             montaje: "Pinza en la repisa o placa en la pared",
+             masa: "≈ 155 g de PETG" },
+  entrada: { nombre: "Estación de entrada", id: "pir + puerta", H: 80, W: 202, conOrejas: "202 × 80 × 40.5 mm",
+             cuerpo: "174 × 80 × 40.5 mm, horizontal (domo +12)",
+             mide: "Movimiento (HC-SR501) y puerta abierta (MC-38 en el marco, por cable)",
+             extra: "Dos placas en una protoboard de 830 puntos. Cada par de luces lleva rotulado el nombre de su sensor: PIR y PUERTA",
+             montaje: "Horizontal, junto a la entrada a ≈ 2 m: dos tacos impresos con tornillos o tiras removibles. Solo ocupa 8 cm de alto",
+             masa: "≈ 160 g de PETG" },
+  anaquel: { nombre: "Estación del anaquel", id: "acel + luz", H: 80, W: 202, conOrejas: "202 × 80 × 40.5 mm",
+             cuerpo: "174 × 80 × 40.5 mm, horizontal",
+             mide: "Golpes (GY-61 + ADS1115) y luz (fotorresistencia en un capuchón negro con difusor, orientable, junto a la lámpara)",
+             extra: "Dos placas en una protoboard de 830 puntos. Cada par de luces lleva rotulado el nombre de su sensor: ACEL y LUZ",
+             montaje: "Horizontal y rígida al anaquel: 2 tornillos o cinchos en las orejas. Solo ocupa 8 cm de alto",
+             masa: "≈ 142 g de PETG" },
+};
+const ORDEN = ["dht", "entrada", "anaquel"];
+const D = 40.5, DB = 38.0;
+// posiciones en la escena "Todos" (mm): cajas en fila, pegadas al piso
+const POS_X = { dht: -232, entrada: -61, anaquel: 171 };
+
+function ficha(clave) {
+  const el = document.getElementById("ficha");
+  if (clave === "todos") {
+    el.innerHTML = '<h3>Las tres cajas</h3><dl><dt>Microcontroladores</dt><dd class="mono">5 (uno por integrante)</dd>' +
+      '<dt>Temperatura</dt><dd class="mono">80 × 138 mm, vertical</dd>' +
+      '<dt>Estaciones</dt><dd class="mono">174 × 80 mm, horizontales</dd><dt>Profundidad</dt><dd class="mono">40.5 mm</dd>' +
+      '<dt>Fuentes de 5 V</dt><dd class="mono">3 (una por caja)</dd><dt>Material</dt><dd>PETG blanco mate, impreso sin soportes</dd>' +
+      '<dt>Cierre</dt><dd>4 tornillos por el frente</dd><dt>Filamento total</dt><dd class="mono">≈ 458 g</dd></dl>';
+    return;
+  }
+  if (clave === "accesorios") {
+    el.innerHTML = '<h3>Capuchón de la luz y guías de la puerta</h3><dl><dt>Capuchón</dt><dd class="mono">16 × 27 × 26 mm, PETG negro</dd>' +
+      '<dt>Ventana</dt><dd class="mono">Ø4.5 mm, difusor de 0.9 mm</dd><dt>Visera</dt><dd class="mono">4 mm (±51°)</dd>' +
+      '<dt>Horquilla</dt><dd>Gira de −90° a +75°; 2 tornillos o 2 cinchos</dd>' +
+      '<dt>Guías MC-38</dt><dd class="mono">51 × 18 × 12 mm cada una</dd><dt>Separación</dt><dd>≈ 20 mm con la puerta cerrada; ajuste de ±3 mm por guía</dd>' +
+      '<dt>Medidas</dt><dd>Supuestas: falta medir la fotorresistencia y el sensor reales</dd></dl>';
+    return;
+  }
+  const n = NODOS[clave];
+  el.innerHTML = `<h3>${n.nombre}</h3><dl><dt>ID</dt><dd class="mono">${n.id}</dd><dt>Cuerpo</dt><dd class="mono">${n.cuerpo}</dd>` +
+    `<dt>Con orejas</dt><dd class="mono">${n.conOrejas}</dd><dt>Sensor</dt><dd>${n.mide}</dd><dt>Detalle</dt><dd>${n.extra}</dd>` +
+    `<dt>Montaje</dt><dd>${n.montaje}</dd><dt>Material</dt><dd>${n.masa}</dd></dl>`;
+}
+
+// ───────── visor 3D: cajas por capas, niveles de corte, ensamble separado y accesorios ─────────
+// Niveles = los de los cortes acotados (cad/niveles.py): z en mm desde la espalda de la caja.
+const NIVELES = [
+  { c: "N1", z: 6.0, n: "Piso y protoboard" }, { c: "N2", z: 12.0, n: "Placas" },
+  { c: "N3", z: 20.0, n: "Conectores" }, { c: "N4", z: 30.0, n: "Bajo la tapa" }, { c: "N5", z: 39.2, n: "Frente de la tapa" },
+];
+const lienzo = document.getElementById("lienzo");
+const estado3d = document.getElementById("estado3d");
+const reducido = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let renderer, scene, camera, controls, girar = !reducido;
+const grupos = {};           // clave -> {raiz, interior, tapa}
+let seleccion = "todos", explObj = 0, explT = 0;
+let ledV3d = null, ledR3d = null, oledTex = null;
+const capas = { carcasa: true, protoboard: true, placa: true, modulos: true, cables: true };
+const plano = (window.THREE ? new THREE.Plane(new THREE.Vector3(0, 0, -1), 1e4) : null);
+const materiales = [];
+
+function cssVar(nombre, defecto) { return getComputedStyle(document.documentElement).getPropertyValue(nombre).trim() || defecto; }
+function material(color, extra) {
+  const m = new THREE.MeshStandardMaterial(Object.assign({ color, roughness: 0.7, metalness: 0, side: THREE.DoubleSide,
+    clippingPlanes: [plano] }, extra || {}));
+  materiales.push(m);
+  return m;
+}
+
+// accesorios: color, capa y desplazamiento al separar (mm, coordenadas del grupo)
+const ACC = {
+  ldr_soporte:        { color: 0x3a3e3c, capa: "carcasa", d: [0, 0, 0] },
+  ldr_capuchon:       { color: 0x2a2d2b, capa: "carcasa", d: [0, 14, 0] },
+  ldr_difusor:        { color: 0xffffff, capa: "carcasa", d: [0, 22, -22], extra: { transparent: true, opacity: 0.85 } },
+  ldr_ldr:            { color: 0xc9a227, capa: "modulos", d: [0, 6, 30] },
+  mc38_calza:         { color: 0xb9c2bb, capa: "carcasa", d: [0, -10, 0] },
+  mc38_porta_sensor:  { color: 0xdfe4df, capa: "carcasa", d: [0, 0, 0] },
+  mc38_cuerpo_sensor: { color: 0xfafafa, capa: "modulos", d: [0, 24, 0] },
+  mc38_porta_iman:    { color: 0xdfe4df, capa: "carcasa", d: [0, 0, 0] },
+  mc38_cuerpo_iman:   { color: 0xfafafa, capa: "modulos", d: [0, 24, 0] },
+};
+
+function iniciar3D() {
+  if (!window.THREE || !THREE.STLLoader || !THREE.OrbitControls) { estado3d.textContent = "No se pudo cargar el visor 3D."; return; }
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.localClippingEnabled = true;
+  lienzo.prepend(renderer.domElement);
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(cssVar("--viewer-bg", "#e7ece9"));
+  camera = new THREE.PerspectiveCamera(32, 4 / 3, 1, 5000);
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.addEventListener("start", () => { girar = false; document.getElementById("btn-giro").setAttribute("aria-pressed", "false"); });
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8a948e, 0.85));
+  const sol = new THREE.DirectionalLight(0xffffff, 0.75); sol.position.set(200, 300, 400); scene.add(sol);
+  const contra = new THREE.DirectionalLight(0xffffff, 0.35); contra.position.set(-300, 100, -200); scene.add(contra);
+
+  const mat = {
+    base: material(0xeceeea, { roughness: 0.82 }), tapa: material(0xf6f7f4, { roughness: 0.78 }),
+    protoboard: material(cssVar("--c-protoboard", "#f4efe2")), placa: material(cssVar("--c-placa", "#3b6ea5"), { roughness: 0.5 }),
+    modulos: material(cssVar("--c-modulos", "#3f8a5f"), { roughness: 0.55 }), cables: material(cssVar("--c-cables", "#6b6b6b")),
+    pantalla: material(0x0b0f0d, { roughness: 0.3 }),
+    domo: material(0xffffff, { roughness: 0.4, transparent: true, opacity: 0.9 }),
+  };
+  const cargador = new THREE.STLLoader();
+  // todos los STL van en un solo JSON (base64): los artifacts no sirven .stl
+  const paquete = fetch("modelos.json").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); });
+  const info = fetch("nodos.json").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); });
+  const cargar = (nombre) => paquete.then((p) => {
+    if (!p[nombre]) throw new Error("falta " + nombre);
+    const bin = atob(p[nombre]), buf = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+    const geo = cargador.parse(buf.buffer); geo.computeVertexNormals(); return geo;
+  });
+  const tareas = [];
+  info.then((datos) => {
+    ORDEN.forEach((clave) => {
+      const raiz = new THREE.Group(), interior = new THREE.Group(), tapa = new THREE.Group();
+      raiz.add(interior); raiz.add(tapa);
+      raiz.position.set(POS_X[clave], 0, 0);
+      scene.add(raiz);
+      grupos[clave] = { raiz, interior, tapa };
+      datos[clave].grupos.forEach((g) => tareas.push(cargar(`${clave}_${g}`).then((geo) => {
+        const enTapa = g.endsWith("_t") || ["tapa", "led_v", "led_r", "pantalla", "domo"].includes(g);
+        const cat = g.replace(/_t$/, "");
+        let m;
+        if (g === "led_v" || g === "led_r") {
+          const col = g === "led_v" ? 0x2fbf62 : 0xe0442c;
+          m = material(col, { roughness: 0.3, emissive: col, emissiveIntensity: g === "led_v" ? 0.9 : 0.05 });
+        } else m = mat[cat];
+        const malla = new THREE.Mesh(geo, m);
+        malla.userData.capa = (g === "base" || g === "tapa") ? "carcasa" : (capas[cat] !== undefined ? cat : null);
+        (enTapa ? tapa : (g === "base" ? raiz : interior)).add(malla);
+        if (clave === "dht" && g === "led_v") ledV3d = m;
+        if (clave === "dht" && g === "led_r") ledR3d = m;
+      })));
+      if (clave === "dht") {
+        // area activa de la OLED 2.42" (55 x 27.5 mm) frente al vidrio, con la imagen de la simulacion
+        oledTex = new THREE.CanvasTexture(document.getElementById("oled"));
+        oledTex.magFilter = THREE.NearestFilter;
+        const pl = new THREE.Mesh(new THREE.PlaneGeometry(55.0, 27.5),
+          new THREE.MeshBasicMaterial({ map: oledTex, clippingPlanes: [plano] }));
+        pl.position.set(0, 98.0, DB + 0.08);
+        tapa.add(pl);
+      }
+    });
+    // capuchon de la LDR y guias del MC-38, armados; el grupo se gira para que miren a la camara
+    const acc = new THREE.Group();
+    acc.rotation.y = Math.PI;
+    scene.add(acc);
+    grupos.accesorios = { raiz: acc, piezas: [] };
+    datos.accesorios.piezas.forEach((k) => tareas.push(cargar(`acc_${k}`).then((geo) => {
+      const a = ACC[k] || { color: 0xcccccc, capa: "carcasa", d: [0, 0, 0] };
+      const malla = new THREE.Mesh(geo, material(a.color, a.extra));
+      malla.userData.capa = a.capa; malla.userData.d = a.d;
+      acc.add(malla);
+      grupos.accesorios.piezas.push(malla);
+    })));
+    return Promise.allSettled(tareas);
+  }).then((r) => {
+    const fallos = (r || []).filter((x) => x.status === "rejected").length;
+    estado3d.textContent = fallos ? `Faltaron ${fallos} piezas del modelo.` : "Modelo con medidas supuestas · mm";
+    aplicarCapas();
+    enfocar(seleccion, true);
+  }).catch(() => { estado3d.textContent = "No se pudieron cargar los modelos."; });
+  new ResizeObserver(ajustar).observe(lienzo);
+  ajustar();
+  const fondo = () => { scene.background = new THREE.Color(cssVar("--viewer-bg", "#e7ece9")); };
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", fondo);
+  new MutationObserver(fondo).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  animar();
+}
+
+function ajustar() {
+  if (!renderer) return;
+  const w = lienzo.clientWidth, h = lienzo.clientHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h; camera.updateProjectionMatrix();
+  if (controls && Object.keys(grupos).length) enfocar(seleccion);
+}
+
+function aplicarCapas() {
+  scene.traverse((o) => { if (o.isMesh && o.userData.capa) o.visible = capas[o.userData.capa]; });
+}
+
+function enfocar(clave) {
+  seleccion = clave;
+  [...ORDEN, "accesorios"].forEach((k) => {
+    const g = grupos[k]; if (!g) return;
+    g.raiz.visible = clave === "todos" ? k !== "accesorios" : clave === k;
+    if (k !== "accesorios") g.raiz.position.x = clave === "todos" ? POS_X[k] : 0;
+  });
+  // distancia para que quepa el ancho y el alto con el aspecto real del lienzo (fov vertical de 32 grados)
+  const encuadre = (ancho, alto) => {
+    const tv = Math.tan(THREE.MathUtils.degToRad(16));
+    return Math.max(alto / 2 / tv, ancho / 2 / (tv * camera.aspect)) * 1.18;
+  };
+  if (clave === "accesorios") {
+    const dist = encuadre(190, 70);
+    controls.target.set(0, 12, 10);
+    camera.position.set(-0.15 * dist, 12 + 0.45 * dist, 10 + 0.88 * dist);
+  } else {
+    const alto = clave === "todos" ? 175 : NODOS[clave].H;
+    const ancho = clave === "todos" ? 580 : NODOS[clave].W;
+    const dist = encuadre(ancho, alto) + D;
+    controls.target.set(0, alto / 2, D / 2);
+    camera.position.set(0.18 * dist, alto / 2 + 0.3 * dist, D / 2 + 0.94 * dist);
+  }
+  controls.update();
+}
+
+function animar() {
+  requestAnimationFrame(animar);
+  explT += (explObj - explT) * (reducido ? 1 : 0.12);
+  ORDEN.forEach((k) => {
+    const g = grupos[k]; if (!g) return;
+    g.interior.position.z = explT * 40;
+    g.tapa.position.z = explT * 95;
+  });
+  if (grupos.accesorios) grupos.accesorios.piezas.forEach((m) => {
+    const d = m.userData.d; m.position.set(d[0] * explT, d[1] * explT, d[2] * explT);
+  });
+  if (girar && seleccion !== "todos") {
+    const t = controls.target, p = camera.position;
+    const a = 0.004, dx = p.x - t.x, dz = p.z - t.z;
+    p.x = t.x + dx * Math.cos(a) - dz * Math.sin(a); p.z = t.z + dx * Math.sin(a) + dz * Math.cos(a);
+  }
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+function ponerCorte(v) {
+  const r = document.getElementById("r-corte");
+  r.value = v;
+  const sin = v >= 100;
+  const z = D * v / 100;
+  if (plano) plano.constant = sin ? 1e4 : z;
+  document.getElementById("v-corte").textContent = sin ? "sin corte" : `z = ${z.toFixed(1)} mm`;
+  document.querySelectorAll("#chips-nivel button").forEach((b) => {
+    const nv = b.dataset.z === "sin" ? sin : (!sin && Math.abs(+b.dataset.z - z) < 0.3);
+    b.setAttribute("aria-pressed", String(nv));
+  });
+}
+(function chips() {
+  const cont = document.getElementById("chips-nivel");
+  const crear = (txt, z, titulo) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = txt; b.dataset.z = z; b.title = titulo; b.setAttribute("aria-pressed", "false");
+    b.addEventListener("click", () => {
+      if (z !== "sin") { explObj = 0; document.getElementById("r-expl").value = 0; textoExpl(0); }
+      ponerCorte(z === "sin" ? 100 : (z / D) * 100);
+    });
+    cont.appendChild(b);
+  };
+  NIVELES.forEach((n) => crear(n.c, n.z, `${n.n} (z = ${n.z} mm)`));
+  crear("Sin corte", "sin", "Ver la caja completa");
+  ponerCorte(100);
+})();
+function textoExpl(v) { document.getElementById("v-expl").textContent = +v === 0 ? "cerrado" : `${v} %`; }
+document.getElementById("r-expl").addEventListener("input", (e) => { explObj = e.target.value / 100; textoExpl(e.target.value); });
+document.getElementById("r-corte").addEventListener("input", (e) => ponerCorte(+e.target.value));
+document.querySelectorAll("[data-capa]").forEach((c) => c.addEventListener("change", () => {
+  capas[c.dataset.capa] = c.checked; aplicarCapas();
+}));
+
+document.querySelectorAll("[data-nodo]").forEach((b) => b.addEventListener("click", () => {
+  document.querySelectorAll("[data-nodo]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+  ficha(b.dataset.nodo);
+  if (controls) enfocar(b.dataset.nodo);
+}));
+document.getElementById("btn-giro").addEventListener("click", (e) => {
+  girar = !girar; e.currentTarget.setAttribute("aria-pressed", String(girar));
+});
+
+// ───────── simulacion del nodo dht (misma logica que el firmware de referencia) ─────────
+const REGLA = { t: { min: 22, max: 28, hist: 0.5 }, h: { min: 40, max: 60, hist: 2 } };
+const PERSISTENCIA = 3, LECTURA_S = 30, SILENCIO_LECT = 60, RECORDATORIO_LECT = 60;
+let sim;
+function nuevoEstado() {
+  return { tick: 0, t: 25, h: 50, vig: { t: { fuera: 0, dentro: 0, alarma: false }, h: { fuera: 0, dentro: 0, alarma: false } },
+    invalidas: 0, falla: false, silencioHasta: -1, sinRedDesde: -1, avisoRed: false, recordatorio: { t: 0, h: 0 } };
+}
+function evaluar(v, regla, valor) {
+  if (valor < regla.min || valor > regla.max) { v.dentro = 0; v.fuera = Math.min(v.fuera + 1, PERSISTENCIA); if (v.fuera >= PERSISTENCIA) v.alarma = true; }
+  else if (valor >= regla.min + regla.hist && valor <= regla.max - regla.hist) { v.fuera = 0; v.dentro = Math.min(v.dentro + 1, PERSISTENCIA); if (v.dentro >= PERSISTENCIA) v.alarma = false; }
+  else { v.fuera = 0; v.dentro = 0; }
+}
+const $ = (id) => document.getElementById(id);
+function hora(tick) {
+  const s = 9 * 3600 + tick * LECTURA_S;
+  const hh = String(Math.floor(s / 3600) % 24).padStart(2, "0"), mm = String(Math.floor(s / 60) % 60).padStart(2, "0"), ss = String(s % 60).padStart(2, "0");
+  return `${hh}:${mm}:${ss}`;
+}
+function registrar(texto, clase) {
+  const li = document.createElement("li");
+  li.innerHTML = `<span class="h">${hora(sim.tick).slice(0, 5)}</span><span class="${clase || ""}">${texto}</span>`;
+  $("bitacora").prepend(li);
+}
+const enRed = () => !$("s-red").checked;
+const silenciado = () => sim.tick < sim.silencioHasta;
+
+function paso() {
+  sim.tick++;
+  const ruido = () => (Math.random() - 0.5) * 0.2;
+  const sensorOk = !$("s-sensor").checked;
+  if (!sensorOk) {
+    sim.invalidas = Math.min(sim.invalidas + 1, PERSISTENCIA);
+    if (sim.invalidas >= PERSISTENCIA && !sim.falla) { sim.falla = true; if (enRed()) registrar("Aviso: falla del sensor de temperatura (WhatsApp y Telegram).", "alerta"); }
+  } else {
+    if (sim.falla && enRed()) registrar("Sensor de nuevo en línea.", "ok");
+    sim.invalidas = 0; sim.falla = false;
+    sim.t = +$("r-t").value + ruido(); sim.h = +$("r-h").value + ruido() * 5;
+    const antes = { t: sim.vig.t.alarma, h: sim.vig.h.alarma };
+    evaluar(sim.vig.t, REGLA.t, sim.t); evaluar(sim.vig.h, REGLA.h, sim.h);
+    for (const k of ["t", "h"]) {
+      const nombre = k === "t" ? "Temperatura" : "Humedad", val = k === "t" ? `${sim.t.toFixed(1)} °C` : `${Math.round(sim.h)} %`;
+      if (!antes[k] && sim.vig[k].alarma) { sim.recordatorio[k] = sim.tick; if (enRed()) registrar(`Alerta: ${nombre.toLowerCase()} fuera de rango (${val}). WhatsApp y Telegram.`, "alerta"); }
+      else if (antes[k] && !sim.vig[k].alarma) { if (enRed()) registrar(`${nombre} normalizada (${val}). Se cierra la alerta.`, "ok"); }
+      else if (sim.vig[k].alarma && sim.tick - sim.recordatorio[k] >= RECORDATORIO_LECT) { sim.recordatorio[k] = sim.tick; if (enRed()) registrar(`Recordatorio: ${nombre.toLowerCase()} sigue fuera de rango (${val}).`, "alerta"); }
+    }
+  }
+  if (!enRed()) {
+    if (sim.sinRedDesde < 0) sim.sinRedDesde = sim.tick;
+    if (!sim.avisoRed && sim.tick - sim.sinRedDesde >= 3) { sim.avisoRed = true; registrar("Aviso: el nodo de temperatura dejó de reportar. Su alarma local sigue funcionando.", "alerta"); }
+  } else if (sim.sinRedDesde >= 0) {
+    if (sim.avisoRed) registrar("El nodo de temperatura volvió a reportar.", "ok");
+    sim.sinRedDesde = -1; sim.avisoRed = false;
+  }
+  pintar();
+}
+
+function pintar() {
+  const alerta = sim.vig.t.alarma || sim.vig.h.alarma;
+  const buzzer = alerta && !silenciado();
+  const t = performance.now();
+  const verde = enRed() ? true : Math.floor(t / 1000) % 2 === 0;
+  const rojo = sim.falla ? Math.floor(t / 125) % 2 === 0 : alerta;
+  $("led-v").classList.toggle("on", verde); $("led-r").classList.toggle("on", rojo);
+  if (ledV3d) ledV3d.emissiveIntensity = verde ? 0.9 : 0.05;
+  if (ledR3d) ledR3d.emissiveIntensity = rojo ? 1.0 : 0.05;
+  const z = $("zumb");
+  z.classList.toggle("on", buzzer);
+  z.textContent = buzzer ? "Alarma sonando" : (alerta && silenciado() ? `Silenciada hasta ${hora(sim.silencioHasta).slice(0, 5)}` : "Alarma callada");
+  $("reloj").textContent = hora(sim.tick);
+  dibujarOled();
+}
+
+let GLIFOS = null;   // glifos reales de las fuentes U8g2 del firmware (firmware/herramientas/oled_host.py)
+fetch("glifos_oled.json").then((r) => r.json()).then((j) => { GLIFOS = j; if (sim) pintar(); }).catch(() => {});
+
+function dibujarOled() {
+  // misma vista que firmware/include/vista_oled.h, pixel por pixel (128 x 64, 0.43 mm por punto)
+  if (!GLIFOS) return;
+  const c = $("oled").getContext("2d");
+  const CLARO = "#e9f6ee", OSCURO = "#000";
+  c.fillStyle = OSCURO; c.fillRect(0, 0, 128, 64);
+  const ancho = (fuente, texto) => [...texto].reduce((a, ch) => a + ((GLIFOS[fuente][ch.codePointAt(0)] || {}).adv || 0), 0);
+  const tx = (fuente, texto, x, y, color) => {          // y = linea base; devuelve el ancho
+    c.fillStyle = color;
+    let cx = x;
+    for (const ch of texto) {
+      const g = GLIFOS[fuente][ch.codePointAt(0)];
+      if (!g) continue;
+      g.filas.forEach((fila, j) => { for (let k = 0; k < fila.length; k++) if (fila[k] === "1") c.fillRect(cx + g.dx + k, y + g.dy + j, 1, 1); });
+      cx += g.adv;
+    }
+    return cx - x;
+  };
+  const alerta = sim.vig.t.alarma || sim.vig.h.alarma;
+  let estado = "EN LINEA", inv = false;
+  if (sim.falla) { estado = "FALLA DEL SENSOR"; inv = true; }
+  else if (alerta) { estado = silenciado() ? "ALARMA SILENCIADA" : "ALARMA"; inv = true; }
+  else if (!enRed()) estado = "SIN RED";
+  if (inv) { c.fillStyle = CLARO; c.fillRect(0, 0, 128, 10); }
+  const tb = inv ? OSCURO : CLARO;
+  tx("5x8", estado, 2, 8, tb);
+  if (inv && !enRed()) tx("5x8", "SIN RED", 126 - ancho("5x8", "SIN RED"), 8, tb);
+  const dato = !sim.falla;
+  const etq = (vig, val, regla) => (vig.alarma ? (val < regla.min ? "BAJA" : "ALTA") : "");
+  let w = tx("logisoso26", dato ? sim.t.toFixed(1) : "--.-", 0, 39, CLARO);
+  tx("helvB10", "°C", w + 4, 24, CLARO);
+  if (dato) tx("5x8", etq(sim.vig.t, sim.t, REGLA.t), w + 4, 36, CLARO);
+  const wd = tx("logisoso16", dato ? String(Math.round(sim.h)) : "--", 0, 63, CLARO);
+  const wu = tx("helvB08", "% HR", wd + 4, 63, CLARO);
+  if (dato) tx("5x8", etq(sim.vig.h, sim.h, REGLA.h), wd + wu + 10, 63, CLARO);
+  if (oledTex) oledTex.needsUpdate = true;
+}
+
+let auto = null;
+function reiniciar() {
+  sim = nuevoEstado(); $("bitacora").innerHTML = "";
+  registrar("Sistema en línea. Lecturas cada 30 s.", "ok"); pintar();
+}
+$("r-t").addEventListener("input", (e) => { $("v-t").textContent = `${(+e.target.value).toFixed(1)} °C`; });
+$("r-h").addEventListener("input", (e) => { $("v-h").textContent = `${e.target.value} %`; });
+$("b-paso").addEventListener("click", paso);
+$("b-auto").addEventListener("click", (e) => {
+  if (auto) { clearInterval(auto); auto = null; } else auto = setInterval(paso, 700);
+  e.currentTarget.setAttribute("aria-pressed", String(!!auto));
+  e.currentTarget.textContent = auto ? "Pausar" : "Avanzar solo";
+});
+$("b-silencio").addEventListener("click", () => {
+  sim.silencioHasta = sim.tick + SILENCIO_LECT;
+  registrar("Botón presionado: alarma silenciada 30 min. Los avisos siguen.", "");
+  pintar();
+});
+$("b-reinicio").addEventListener("click", reiniciar);
+["s-red", "s-sensor"].forEach((id) => $(id).addEventListener("change", pintar));
+setInterval(() => { if (sim) pintar(); }, 125);   // parpadeos de LED
+
+// ───────── circuitos: esquematico por nodo; protoboard y cableado por caja ─────────
+const CAJAS = [["dht", "Temperatura"], ["entrada", "Estación de entrada"], ["anaquel", "Estación del anaquel"]];
+const CIRC = {
+  esq: { items: [["dht", "Temperatura"], ["luz", "Luz"], ["pir", "Accesos"], ["puerta", "Puerta"], ["acel", "Golpes"]],
+         src: (k) => `esquematicos/nodo_${k}.svg`, alt: "Esquemático del nodo",
+         nota: "Un esquemático por microcontrolador. En las estaciones, dos circuitos comparten protoboard y fuente de 5 V sin tocarse." },
+  proto: { items: CAJAS, src: (k) => `protoboard/${k === "dht" ? "nodo_dht" : "estacion_" + k}_protoboard.png`,
+           alt: "Armado en protoboard de la caja",
+           nota: "Orificio por orificio, como se arma. Líneas gruesas: puentes cortos; puntos de color: cables a módulos fuera de la placa. El riel de 3.3 V de cada placa nunca se une." },
+  cable: { items: CAJAS, src: (k) => `cableado/nodo_${k}.png`, alt: "Diagrama de cableado de la caja",
+           nota: "Qué cable va a qué pin, con su color (WireViz). Los cables a sensores externos (fotorresistencia, sensor de puerta) salen de la caja." },
+};
+let circTipo = "esq", circElem = { esq: "dht", proto: "dht", cable: "dht" };
+function pintarCirc() {
+  const c = CIRC[circTipo];
+  const cont = document.getElementById("circ-elem");
+  cont.innerHTML = "";
+  c.items.forEach(([k, txt]) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = txt; b.setAttribute("aria-pressed", String(k === circElem[circTipo]));
+    b.addEventListener("click", () => { circElem[circTipo] = k; pintarCirc(); });
+    cont.appendChild(b);
+  });
+  const k = circElem[circTipo], nombre = c.items.find((x) => x[0] === k)[1];
+  const img = document.getElementById("img-esq");
+  img.src = c.src(k); img.alt = `${c.alt}: ${nombre.toLowerCase()}`;
+  img.closest("figure").classList.toggle("alta", circTipo === "proto");
+  document.getElementById("nota-circ").textContent = c.nota;
+}
+document.querySelectorAll("[data-circ-tipo]").forEach((b) => b.addEventListener("click", () => {
+  document.querySelectorAll("[data-circ-tipo]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+  circTipo = b.dataset.circTipo; pintarCirc();
+}));
+pintarCirc();
+
+// ───────── laminas: cortes por niveles y vistas exteriores ─────────
+let lamCaja = "dht", lamTipo = "niveles";
+const NOMBRE_CAJA = { dht: "del nodo de temperatura", entrada: "de la estación de entrada", anaquel: "de la estación del anaquel" };
+function pintarLamina() {
+  const img = document.getElementById("img-lam");
+  const niveles = lamTipo === "niveles";
+  img.src = niveles ? `img/niveles_${lamCaja}.png` : `img/nodo_${lamCaja}_vistas.png`;
+  img.alt = (niveles ? "Cortes por niveles " : "Vistas frontal, lateral y posterior ") + NOMBRE_CAJA[lamCaja] + ", con cotas en mm";
+  document.getElementById("cap-lam").textContent = niveles
+    ? "Gris: carcasa impresa. Crema: protoboard. Azul: NodeMCU. Verde: sensores y componentes. Gris oscuro: conectores. Naranja: LED."
+    : "Vistas exteriores a la misma escala, con las medidas del cuerpo y con orejas. Líneas punteadas: aristas ocultas.";
+  document.querySelectorAll("[data-lam-caja]").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.lamCaja === lamCaja)));
+  document.querySelectorAll("[data-lam-tipo]").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.lamTipo === lamTipo)));
+}
+document.querySelectorAll("[data-lam-caja]").forEach((b) => b.addEventListener("click", () => { lamCaja = b.dataset.lamCaja; pintarLamina(); }));
+document.querySelectorAll("[data-lam-tipo]").forEach((b) => b.addEventListener("click", () => { lamTipo = b.dataset.lamTipo; pintarLamina(); }));
+
+ficha("todos");
+reiniciar();
+iniciar3D();
+</script>

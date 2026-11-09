@@ -1,0 +1,527 @@
+{
+  "_info": {
+    "version": "2026-10-21 borrador 2 (literales de nodos.py movidos aqui)",
+    "unidades": "mm salvo indicacion",
+    "fuentes": {
+      "usuario": "confirmado por el equipo (sin calibrador)",
+      "nominal": "hoja de datos o medida tipica de mercado; MEDIR con calibrador antes de imprimir",
+      "design": "tomado del diseno de Claude Design (https://claude.ai/artifact/UoYgUnGxKuJ2HGDwXeBDj1); solo estetica",
+      "decision": "valor de diseno elegido por Claude; ajustable",
+      "por_confirmar": "sin dato; no modelar hasta tenerlo"
+    },
+    "regla": "Ningun valor 'nominal' es definitivo. Al medir, cambiar fuente a 'medido' y regenerar con cad/nodos.py"
+  },
+  "impresion": {
+    "material_final": {
+      "valor": "PETG",
+      "fuente": "usuario"
+    },
+    "material_prototipo": {
+      "valor": "PLA o PETG",
+      "fuente": "decision",
+      "nota": "no hay filamento; se compra PETG (impresora disponible)"
+    },
+    "pared": {
+      "valor": 2.0,
+      "fuente": "usuario"
+    },
+    "holgura": {
+      "valor": 0.3,
+      "fuente": "usuario",
+      "nota": "ajustar tras la pieza de prueba"
+    },
+    "chaflan": {
+      "valor": 2.5,
+      "fuente": "design"
+    },
+    "texto_hundido": {
+      "valor": 0.4,
+      "fuente": "design"
+    },
+    "ranura_ventilacion": {
+      "valor": 1.6,
+      "fuente": "design"
+    },
+    "holgura_minima_modulos": {
+      "valor": 2.0,
+      "fuente": "usuario"
+    }
+  },
+  "nodemcu": {
+    "variante": {
+      "valor": "Amica (ESP-12E v1.0)",
+      "fuente": "usuario"
+    },
+    "pcb": {
+      "valor": [
+        49.0,
+        26.0,
+        1.6
+      ],
+      "fuente": "nominal",
+      "nota": "largo, ancho, espesor; Amica tipica 48.3-49 x 25.4-26"
+    },
+    "paso_entre_filas_pines": {
+      "valor": 22.86,
+      "fuente": "nominal",
+      "nota": "0.9 in"
+    },
+    "pines_por_lado": {
+      "valor": 15,
+      "fuente": "nominal"
+    },
+    "alto_sobre_protoboard": {
+      "valor": 13.0,
+      "fuente": "nominal",
+      "nota": "separador de header + PCB + blindaje ESP-12E; MEDIR"
+    },
+    "usb": {
+      "tipo": "micro-USB",
+      "borde": "corto",
+      "fuente": "nominal",
+      "nota": "MEDIR centro del conector respecto a la PCB y su altura"
+    },
+    "conector_usb_cuerpo": {
+      "valor": [
+        8.0,
+        6.0,
+        3.0
+      ],
+      "fuente": "nominal"
+    },
+    "cable_usb_capuchon": {
+      "valor": [
+        12.0,
+        25.0,
+        8.0
+      ],
+      "fuente": "por_confirmar",
+      "nota": "medir el cable real que se usara"
+    },
+    "separacion_pcb_protoboard": {
+      "valor": 2.5,
+      "fuente": "nominal",
+      "nota": "de la protoboard a la cara inferior de la PCB (base de los pines)"
+    },
+    "vuelo_usb": {
+      "valor": 0.7,
+      "fuente": "nominal",
+      "nota": "lo que el NodeMCU sobresale del borde de la protoboard por el lado USB"
+    }
+  },
+  "protoboard_kit": {
+    "modelo": {
+      "valor": "MB-102, 830 puntos",
+      "fuente": "usuario"
+    },
+    "zona_central": {
+      "valor": "63 columnas x 10 filas (a-e, f-j)",
+      "fuente": "usuario"
+    },
+    "rieles": {
+      "valor": "4 x 50 puntos",
+      "fuente": "usuario"
+    },
+    "dimensiones": {
+      "valor": [
+        165.1,
+        54.6,
+        8.5
+      ],
+      "fuente": "nominal",
+      "nota": "con rieles; MEDIR"
+    },
+    "paso": {
+      "valor": 2.54,
+      "fuente": "nominal"
+    },
+    "canal_central": {
+      "valor": 7.62,
+      "fuente": "nominal",
+      "nota": "0.3 in entre filas e y f"
+    }
+  },
+  "protoboard_nodo_propuesta": {
+    "modelo": {
+      "valor": "400 puntos (media MB-102)",
+      "fuente": "usuario",
+      "nota": "aprobada el 19-oct"
+    },
+    "dimensiones": {
+      "valor": [
+        82.5,
+        54.6,
+        8.5
+      ],
+      "fuente": "nominal"
+    },
+    "columnas": {
+      "valor": 30,
+      "fuente": "nominal"
+    }
+  },
+  "dht22": {
+    "cuerpo": {
+      "valor": [
+        15.1,
+        25.0,
+        7.7
+      ],
+      "fuente": "nominal",
+      "nota": "hoja de datos Aosong"
+    },
+    "formato": {
+      "valor": "modulo de 3 pines con cables (AR0600)",
+      "fuente": "por_confirmar",
+      "nota": "el DHT11 del kit es modulo de 3 pines; confirmar si el DHT22 trae pull-up en su PCB"
+    },
+    "modulo_pcb": {
+      "valor": null,
+      "fuente": "por_confirmar"
+    }
+  },
+  "oled": {
+    "propuesta": {
+      "valor": "2.42 in SSD1309 128x64 I2C (version de 4 pines)",
+      "fuente": "usuario",
+      "nota": "adoptada el 19-oct en lugar de la 1.3 in. Muchas 2.42 in vienen en SPI de 7 pines: pedir la de I2C de 4 pines o cambiar sus resistencias de modo y atender RES [POR CONFIRMAR al comprar]"
+    },
+    "modulo_2p42": {
+      "valor": [
+        60.5,
+        37.0,
+        4.0
+      ],
+      "fuente": "nominal",
+      "nota": "largo x alto x grueso con vidrio; MEDIR (varia por proveedor)"
+    },
+    "area_activa_2p42": {
+      "valor": [
+        55.0,
+        27.5
+      ],
+      "fuente": "nominal"
+    },
+    "centro_activo_desde_conector": {
+      "valor": 20.0,
+      "fuente": "por_confirmar",
+      "nota": "distancia del borde del conector al centro del area activa"
+    },
+    "modulo_1p3": {
+      "valor": [
+        35.4,
+        33.5,
+        4.0
+      ],
+      "fuente": "nominal",
+      "nota": "descartada el 19-oct (digitos de 11.5 mm)"
+    },
+    "area_activa_1p3": {
+      "valor": [
+        29.4,
+        14.7
+      ],
+      "fuente": "nominal"
+    }
+  },
+  "hc_sr501": {
+    "pcb": {
+      "valor": [
+        32.0,
+        24.0
+      ],
+      "fuente": "nominal"
+    },
+    "domo_diametro": {
+      "valor": 23.0,
+      "fuente": "nominal"
+    },
+    "domo_alto": {
+      "valor": 11.0,
+      "fuente": "nominal"
+    },
+    "agujeros_entre_centros": {
+      "valor": 28.0,
+      "fuente": "nominal",
+      "nota": "M2; MEDIR"
+    },
+    "alto_total_sin_domo": {
+      "valor": 12.0,
+      "fuente": "por_confirmar",
+      "nota": "potenciometros y pines por detras"
+    }
+  },
+  "gy61": {
+    "pcb": {
+      "valor": [
+        20.3,
+        15.7
+      ],
+      "fuente": "nominal",
+      "nota": "largo a lo largo de la tira de 5 pines x alto; MEDIR"
+    },
+    "agujeros": {
+      "valor": null,
+      "fuente": "por_confirmar"
+    }
+  },
+  "ads1115": {
+    "pcb": {
+      "valor": [
+        28.0,
+        17.5
+      ],
+      "fuente": "nominal",
+      "nota": "largo a lo largo de la tira de 10 pines x alto; MEDIR"
+    },
+    "agujeros": {
+      "valor": null,
+      "fuente": "por_confirmar"
+    }
+  },
+  "ldr": {
+    "cabeza_diametro": {
+      "valor": 5.0,
+      "fuente": "nominal",
+      "nota": "tipica GL55xx de 5 mm; confirmar modelo"
+    },
+    "cabeza_alto": {
+      "valor": 2.0,
+      "fuente": "nominal",
+      "nota": "[POR CONFIRMAR] espesor de la cabeza sin patas"
+    },
+    "cable_diametro": {
+      "valor": 4.0,
+      "fuente": "nominal",
+      "nota": "[POR CONFIRMAR] cable de 2 hilos con termocontraible sobre las soldaduras"
+    },
+    "lampara": {
+      "valor": null,
+      "fuente": "por_confirmar",
+      "nota": "tipo (LED, fluorescente), temperatura de superficie y distancia de montaje"
+    },
+    "capuchon": {
+      "valor": {
+        "diametro_exterior": 16.0,
+        "ventana": 4.5,
+        "alojamiento_ldr": 12.0,
+        "espesor_ventana": 1.2,
+        "visera": 4.0,
+        "difusor_diametro": 10.0,
+        "difusor_espesor": 0.9,
+        "cola": 8.0
+      },
+      "fuente": "design",
+      "nota": "cuerpo negro opaco + disco difusor aparte (fase 1, 20-oct)"
+    }
+  },
+  "mc38": {
+    "cuerpo_sensor": {
+      "valor": [
+        28.0,
+        14.0,
+        8.0
+      ],
+      "fuente": "nominal",
+      "nota": "MEDIR; el iman se supone igual"
+    },
+    "cuerpo_iman": {
+      "valor": [
+        28.0,
+        14.0,
+        8.0
+      ],
+      "fuente": "nominal",
+      "nota": "[POR CONFIRMAR] se supone igual al sensor; medir largo, ancho y alto sin orejas"
+    },
+    "separacion_trabajo": {
+      "valor": [
+        15,
+        25
+      ],
+      "fuente": "usuario",
+      "nota": "[POR CONFIRMAR con el MC-38 real] la distancia de accionamiento cambia por modelo; medir con el multimetro"
+    },
+    "porta": {
+      "valor": {
+        "pared_frente": 1.2,
+        "piso": 2.0,
+        "retencion": 0.4,
+        "chaflan_entrada": 0.6,
+        "oreja_largo": 9.0,
+        "oreja_alto": 3.0,
+        "ranura_largo": 10.0,
+        "ranura_ancho": 3.8
+      },
+      "fuente": "design",
+      "nota": "fase 2 (20-oct); retencion a ajustar con la pieza de prueba"
+    }
+  },
+  "buzzer_ky012": {
+    "pcb": {
+      "valor": [
+        18.5,
+        15.0,
+        1.6
+      ],
+      "fuente": "nominal",
+      "nota": "largo x ancho x espesor; MEDIR (antes estaba fijo en nodos.py)"
+    },
+    "pinout": {
+      "valor": null,
+      "fuente": "por_confirmar",
+      "nota": "medir con multimetro (S, +, -)"
+    },
+    "diametro_buzzer": {
+      "valor": 12.0,
+      "fuente": "nominal"
+    }
+  },
+  "boton_kit": {
+    "tipo": {
+      "valor": "pulsador tactil 4 pines",
+      "fuente": "por_confirmar"
+    },
+    "cuerpo": {
+      "valor": [
+        6.0,
+        6.0
+      ],
+      "fuente": "nominal",
+      "nota": "o 12x12; MEDIR"
+    }
+  },
+  "led": {
+    "diametro": {
+      "valor": 5.0,
+      "fuente": "nominal",
+      "nota": "kit trae rojo, verde, amarillo; confirmar 5 o 3 mm"
+    },
+    "agujero": {
+      "valor": 5.3,
+      "fuente": "design"
+    },
+    "paso_verde_rojo": {
+      "valor": 12.0,
+      "fuente": "design"
+    }
+  },
+  "c1": {
+    "valor": "220 uF 16 V radial",
+    "cuerpo": {
+      "valor": [
+        8.0,
+        12.0
+      ],
+      "fuente": "nominal",
+      "nota": "diametro x alto"
+    }
+  },
+  "fijacion": {
+    "inserto_termico": {
+      "valor": "M3 x 5, D ext 4.6",
+      "agujero": 4.0,
+      "fuente": "design",
+      "nota": "se compran; confirmar medida del lote"
+    },
+    "tornillo_tapa": {
+      "valor": "M3 cabeza cilindrica, largo segun profundidad final",
+      "fuente": "decision"
+    },
+    "ojo_cerradura": {
+      "cabeza": 8.0,
+      "ranura": 3.8,
+      "fuente": "design"
+    }
+  },
+  "q1_to92": {
+    "cuerpo": {
+      "valor": [
+        4.0,
+        5.2,
+        8.0
+      ],
+      "fuente": "nominal",
+      "nota": "envolvente del 2N2222 TO-92 en la protoboard (x, y, alto)"
+    }
+  },
+  "resistencia": {
+    "cuerpo": {
+      "valor": [
+        2.3,
+        3.0,
+        9.0
+      ],
+      "fuente": "nominal",
+      "nota": "ancho, alto acostada, alto de pie (1/4 W)"
+    }
+  },
+  "caja_potencia": {
+    "modulo_rele_pcb": {
+      "valor": [
+        75.0,
+        55.0,
+        1.6
+      ],
+      "fuente": "nominal",
+      "nota": "módulo de 4 relés SRD-05VDC típico: largo, ancho, espesor; MEDIR al comprarlo"
+    },
+    "modulo_rele_agujeros": {
+      "valor": [
+        69.5,
+        49.5,
+        3.1
+      ],
+      "fuente": "nominal",
+      "nota": "entre ejes en x, en y, y diámetro (M3)"
+    },
+    "modulo_rele_alto": {
+      "valor": 19.0,
+      "fuente": "nominal",
+      "nota": "alto de los relés sobre la PCB"
+    },
+    "modulo_rele_bornes": {
+      "valor": [
+        8.0,
+        10.0
+      ],
+      "fuente": "nominal",
+      "nota": "fondo de las clemas de los contactos desde el borde y alto sobre la PCB"
+    },
+    "modulo_rele_tira": {
+      "valor": [
+        6.0,
+        11.0
+      ],
+      "fuente": "nominal",
+      "nota": "franja de la tira de pines (IN, VCC, GND, JD-VCC) desde el borde opuesto y alto con Dupont"
+    },
+    "cable_extension": {
+      "valor": 7.6,
+      "fuente": "nominal",
+      "nota": "diámetro del cable 3 x 16 AWG con tierra (SJT); si la extensión es plana, ajustar la entrada"
+    },
+    "portafusible_linea": {
+      "valor": [
+        55.0,
+        14.0
+      ],
+      "fuente": "nominal",
+      "nota": "portafusible en línea 5x20: largo y diámetro"
+    },
+    "regleta_clemas": {
+      "valor": [
+        64.0,
+        15.0,
+        16.0
+      ],
+      "fuente": "nominal",
+      "nota": "regleta de 8 clemas (4 neutro + 4 tierra): largo, fondo, alto"
+    },
+    "cable_senal": {
+      "valor": 5.0,
+      "fuente": "nominal",
+      "nota": "6 hilos Dupont en funda o cinta; agujero de 6.4"
+    }
+  }
+}

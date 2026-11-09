@@ -1,0 +1,7 @@
+Id	Description	Qty	Unit	Designators
+1	Cable, Dupont M-H, 2 wires	0.9	m	W_Entrada5V, W_acel_LED_R, W_acel_LED_V, W_luz_LDR, W_luz_LED_R, W_luz_LED_V
+2	Connector, Fotorresistencia (tapa, tras el difusor), 2 pins	1		luz_LDR
+3	Connector, LED 5 mm rojo (tapa, derecha), 2 pins	2		acel_LED_R, luz_LED_R
+4	Connector, LED 5 mm verde (tapa, izquierda), 2 pins	2		acel_LED_V, luz_LED_V
+5	Connector, Modulo de entrada USB-C (5 V de la fuente de la caja), 2 pins	1		Entrada5V
+6	Connector, Protoboard 830 pts + 2 NodeMCU Amica, puntos de conexion (ver dibujo de protoboard), 12 pins	1		PB

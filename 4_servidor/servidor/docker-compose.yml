@@ -1,0 +1,99 @@
+# Argos: servidor local (Mosquitto, MySQL, n8n, nginx).
+# Se arranca desde servidor/ indicando el archivo de secretos de la raiz:
+#   docker compose --env-file ../ARCHIVO_DE_SECRETOS up -d
+name: argos
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2.0.22
+    container_name: argos-mosquitto
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./mosquitto:/mosquitto/config:ro     # conf, acl y passwd (solo lectura)
+      - mosquitto_datos:/mosquitto/data      # mensajes retenidos; sobrevive a reinicios
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8.4
+    container_name: argos-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_PASSWORD_ESCRITURA: ${MYSQL_PASSWORD_ESCRITURA}
+      MYSQL_PASSWORD_LECTURA: ${MYSQL_PASSWORD_LECTURA}
+    # Hora UTC, scheduler de eventos (purga de 90 dias) y acentos
+    command:
+      - --default-time-zone=+00:00
+      - --event-scheduler=ON
+      - --character-set-server=utf8mb4
+    ports:
+      - "127.0.0.1:3308:3306"                # solo tu PC; 3308 porque tu PC ya tiene MySQL en 3306 y 3307
+    volumes:
+      - mysql_datos:/var/lib/mysql
+      - ../docs/bd/esquema.sql:/docker-entrypoint-initdb.d/01_esquema.sql:ro
+      - ./mysql/02_usuarios.sh:/docker-entrypoint-initdb.d/02_usuarios.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  n8n:
+    image: n8nio/n8n:2.45.7
+    container_name: argos-n8n
+    depends_on:
+      mysql:
+        condition: service_healthy
+      mosquitto:
+        condition: service_started
+    environment:
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY}   # cifra las credenciales guardadas
+      GENERIC_TIMEZONE: America/Monterrey         # solo para los horarios; la BD sigue en UTC
+      TZ: America/Monterrey
+    ports:
+      - "127.0.0.1:5678:5678"                     # el editor solo se abre desde tu PC
+    volumes:
+      - n8n_datos:/home/node/.n8n
+    restart: unless-stopped
+
+  api:
+    build: ./api                                  # se construye con servidor/api/Dockerfile
+    container_name: argos-api
+    depends_on:
+      mysql:
+        condition: service_healthy
+      mosquitto:
+        condition: service_started
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: argos_escritura                    # unico usuario que escribe en la BD
+      DB_PASSWORD: ${MYSQL_PASSWORD_ESCRITURA}
+      DB_NAME: argos
+      API_KEY: ${API_KEY}
+      PUERTO: 3000
+      MQTT_URL: mqtt://mosquitto:1883             # para cmd/alarma, invernadero/alertas y el LWT
+      MQTT_USER: api
+      MQTT_PASSWORD: ${MQTT_PASSWORD_API}
+    # sin "ports": se entra por nginx (http://servidor/api/...)
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.30.6-alpine
+    container_name: argos-nginx
+    depends_on:
+      - api
+      - n8n
+      - mosquitto
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./web:/usr/share/nginx/html:ro
+    restart: unless-stopped
+
+volumes:
+  mosquitto_datos:
+  mysql_datos:
+  n8n_datos:

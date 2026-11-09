@@ -1,0 +1,10 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "Device")(type "KiCad")(uri "${KICAD10_SYMBOL_DIR}/Device.kicad_sym")(options "")(descr ""))
+  (lib (name "Sensor")(type "KiCad")(uri "${KICAD10_SYMBOL_DIR}/Sensor.kicad_sym")(options "")(descr ""))
+  (lib (name "Switch")(type "KiCad")(uri "${KICAD10_SYMBOL_DIR}/Switch.kicad_sym")(options "")(descr ""))
+  (lib (name "Transistor_BJT")(type "KiCad")(uri "${KICAD10_SYMBOL_DIR}/Transistor_BJT.kicad_sym")(options "")(descr ""))
+  (lib (name "power")(type "KiCad")(uri "${KICAD10_SYMBOL_DIR}/power.kicad_sym")(options "")(descr ""))
+  (lib (name "Regulator_Linear")(type "KiCad")(uri "${KICAD10_SYMBOL_DIR}/Regulator_Linear.kicad_sym")(options "")(descr ""))
+  (lib (name "Argos")(type "KiCad")(uri "${KIPRJMOD}/argos.kicad_sym")(options "")(descr "Símbolos propios de Argos"))
+)

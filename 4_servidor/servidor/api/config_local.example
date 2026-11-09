@@ -1,0 +1,15 @@
+# Para correr la API en tu PC sin Docker (Etapa 3, MySQL local):
+#   1. copia este archivo como  config_local  (en esta misma carpeta; no se sube a git)
+#   2. llena los valores
+#   3. npm install   y luego   npm run local
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=
+DB_PASSWORD=
+DB_NAME=argos
+API_KEY=
+PUERTO=3000
+# Opcional: sin MQTT_URL las alertas solo quedan en la BD (y en GET /api/comandos)
+MQTT_URL=
+MQTT_USER=api
+MQTT_PASSWORD=
