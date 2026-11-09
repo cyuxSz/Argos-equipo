@@ -4,6 +4,8 @@ Encargados: José María y Luis. Plan del frente: [PLAN.md, Frente 4](../PLAN.md
 
 **Por dónde empezar:** [guias/tutorial_servidor.md](guias/tutorial_servidor.md) (paso a paso con Docker).
 
+El servidor es una **laptop con Windows 11 y Docker Desktop**. El mismo compose podría ir después a Oracle Cloud (lección 8 del tutorial), pero es opcional.
+
 ![Despliegue](../diagramas/despliegue_docker.png)
 
 ## Contenido

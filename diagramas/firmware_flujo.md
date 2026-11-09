@@ -1,6 +1,8 @@
 # Flujo del firmware de los nodos
 
-22-oct-2026. Sale del código de `firmware/` (referencia: compilado, sin probar en placa). La parte común está en `include/nodo_comun.h`; las reglas del buzzer, en `include/alarma_dht.h`.
+Actualizado el 9-nov-2026. Sale del código de `firmware/` (compilado, sin probar en placa). La parte común está en `include/nodo_comun.h`; el envío a la API, en `include/api_http.h`; las reglas del buzzer, en `include/alarma_dht.h`.
+
+Cada lectura o evento sale por **dos caminos independientes**: MQTT (tiempo real, si hay broker) y **HTTP POST a la API** (`/api/mediciones`, `/api/eventos`, `/api/latido`, `/api/acciones`), que es lo que se guarda en MySQL. Si el POST falla por red o error 5xx se reintenta una vez; un 400 o 401 no se reintenta.
 
 ## 1. Parte común (los 5 nodos)
 
@@ -20,14 +22,14 @@ flowchart TD
   R -- sí --> CX["conectar con LWT offline retenido<br/>publicar estado online retenido<br/>(reset_reason, uptime_s, rssi)"]
   CX --> ML
   ML --> LAT{"¿nodo con latido<br/>y pasaron 60 s?"}
-  LAT -- sí --> PL["publicar telemetria: latido = 1"]
+  LAT -- sí --> PL["latido: MQTT telemetria latido = 1<br/>+ POST /api/latido (uptime, rssi)"]
   LAT -- no --> LED
   PL --> LED
   LED["LED verde: fijo en línea, parpadeo lento sin red<br/>LED rojo: parpadeo rápido si falla el sensor,<br/>fijo si hay alerta propia"] --> P["lógica propia del nodo<br/>(diagramas 2 y 3)"]
   P --> L
 ```
 
-Latido: lo mandan `pir`, `puerta` y `acel`. `dht` (cada 30 s) y `luz` (cada 60 s) ya publican seguido y no lo necesitan.
+Latido: lo mandan `pir`, `puerta` y `acel`. `dht` (cada 30 s) y `luz` (cada 60 s) ya mandan datos seguido y no lo necesitan.
 
 ## 2. Nodo dht
 
@@ -38,8 +40,8 @@ flowchart TD
   T -- no --> BOT
   T -- sí --> LEE["leer DHT22 (T y HR)"]
   LEE --> V{"resultado"}
-  V -- válida --> PUB["publicar telemetria<br/>temperatura y humedad"]
-  V -- tercera inválida seguida --> ERR["publicar evento sensor_error"]
+  V -- válida --> PUB["MQTT telemetria + POST /api/mediciones<br/>temperatura y humedad"]
+  V -- tercera inválida seguida --> ERR["evento sensor_error<br/>(MQTT + POST /api/eventos)"]
   V -- inválida --> BOT
   PUB --> BOT
   ERR --> BOT
@@ -81,9 +83,9 @@ flowchart LR
   subgraph LUZ["luz (A0)"]
     direction TB
     L1["muestra cada 5 s"] --> L2{"¿12 muestras?"}
-    L2 -- sí --> L3["publicar promedio ADC<br/>cada 60 s"]
+    L2 -- sí --> L3["promedio ADC cada 60 s<br/>(MQTT + POST /api/mediciones)"]
     L3 --> L4["LED rojo si el promedio < 300<br/>(lámparas apagadas) [POR CONFIRMAR]"]
   end
 ```
 
-Lo que decide si algo es alerta (horario de acceso, puerta abierta más de 2 min, fotoperiodo) lo evalúa n8n, no el nodo.
+Lo que decide si algo es alerta en el servidor (temperatura y humedad con las mismas reglas del firmware, puerta abierta, golpe, nodo sin reporte) lo evalúa el **motor de alertas de la API** (`servidor/api/alertas.js`), no el nodo. n8n solo manda los avisos por WhatsApp y Telegram con horario.

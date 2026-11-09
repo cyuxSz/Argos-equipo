@@ -1,6 +1,6 @@
 # Argos: auditoría y reparto en 5 frentes
 
-9-nov-2026. Equipo G507 (TC1004B). Líder e integrador: Luis Mendoza, dueño del repositorio. Contexto del proyecto en `README.md`; pines en `1_electronica/README.md`; contrato MQTT en `3_firmware/README.md`.
+9-nov-2026 (arranque: martes 10 de nov). Equipo G507 (TC1004B). Líder e integrador: Luis Mendoza, dueño del repositorio. Contexto del proyecto en `README.md`; pines en `1_electronica/README.md`; contrato MQTT en `3_firmware/README.md`.
 
 ## 1. Auditoría: dónde estamos
 
@@ -10,7 +10,7 @@
 | Firmware | Los 6 entornos compilan (PlatformIO y Arduino IDE); reglas del buzzer con 21 pruebas en PC; envío por HTTP POST a la API en curso (sin commit) | **Ningún NodeMCU flasheado.** Faltan la prueba en hardware, el WiFi real del invernadero, la calibración y el horario del fotoperiodo |
 | Carcasas 3D | 3 cajas + caja de potencia sin interferencias, imprimibles sin soportes, 3MF listos, piezas de prueba de ajuste | **Nada impreso.** Falta el peine de holguras, ajustar `medidas.json` con lo medido e imprimir en PETG |
 | Cuarto e instalación | Medidas de los encargados, plano 2D, modelo 3D y largos de cable (`2_carcasas_3d/guias/plano_ubicacion.md`) | Medir alturas de planchas, puerta, minisplit y contactos; autorización de fijación |
-| Servidor | Docker Compose con Mosquitto (usuarios + ACL), MySQL (esquema v2), API Node.js, nginx y página inicial (**casi todo sin commit**); simulador de los 5 nodos | Levantarlo de punta a punta con el simulador, flujos de alertas en n8n con horario 7–22 h, dashboard con 5 indicadores, despliegue en Oracle |
+| Servidor | Docker Compose con Mosquitto (usuarios + ACL), MySQL (esquema v2), API Node.js, nginx y página inicial (**casi todo sin commit**); simulador de los 5 nodos | Levantarlo en la laptop con Windows 11 de punta a punta con el simulador, flujos de alertas en n8n con horario 7–22 h, dashboard con 5 indicadores, Oracle Cloud solo si sobra tiempo |
 | Entregables | Avances 1–2 (docx/pdf), Etapa 2 de BD, presupuesto, solicitud de compra | **ExpoIngenierías: video, reporte técnico, perfil y fotos (vencen 20 y 24 de nov)**; entregas del curso que sigan |
 | Gestión | Este repositorio de lectura para el equipo | Repositorio principal en GitHub donde cada quien haga commits; `5_expo/preguntas_pendientes.md` sin enviar |
 
@@ -32,17 +32,18 @@
 
 | Fecha | Qué |
 |---|---|
-| 9 nov (hoy) | Aviso de preselección de ExpoIngenierías (revisar correo); repartir frentes |
-| **11 nov** | Cada frente leyó su carpeta e instaló lo necesario; servidor arriba en una laptop |
-| **13 nov** | Servidor + simulador de punta a punta (dashboard con datos, una alerta en el celular); guion del video; cambios de diseño 3D decididos |
-| **15 nov** | Renders y capturas finales para el video; borrador completo del reporte; checklists de armado y medición listos |
-| **17 nov** | Grabación del video (con hardware si ya llegó; si no, con simulador y CAD) |
-| **19 nov** | Video editado y reporte final en PDF; 3 imágenes + fondo del perfil |
+| lun 9 nov | Aviso de preselección de ExpoIngenierías (revisar correo). Sin trabajo del equipo |
+| **mar 10 nov** | **Arranque.** Cada quien lee `PLAN.md` y la carpeta de su frente e instala lo necesario |
+| **jue 12 nov** | Servidor arriba en la laptop con Windows 11 (Docker Desktop) y el simulador conectado; lista de mejoras al diseño 3D propuesta |
+| **vie 13 nov** | Servidor + simulador de punta a punta (dashboard con datos, una alerta en el celular); guion del video; mejoras de diseño decididas |
+| **lun 16 nov** | Renders y capturas finales; borrador completo del reporte; checklists de armado y medición listos |
+| **mar 17 nov** | Grabación del video (con hardware si ya llegó; si no, con simulador y CAD) |
+| **jue 19 nov** | Video editado, reporte final en PDF, 3 imágenes + fondo del perfil. Meta: subir todo esa noche |
 | Al llegar el hardware | 1–2 días: medir, armar, flashear y probar con el servidor ya listo; después imprimir con las medidas reales |
-| **20 nov, 23:59** | **Subir video MP4 (3–5 min), reporte PDF y perfil (3 imágenes + fondo + logo)** |
-| **24 nov** | **Fotos de cada integrante**; aviso de seleccionados y stand |
-| 25–30 nov | Muestra virtual |
-| 1 dic, 12–17 h | Expo presencial (Arena Borregos): demo en vivo en el stand |
+| **vie 20 nov, 23:59** | **Subir video MP4 (3–5 min), reporte PDF y perfil (3 imágenes + fondo + logo)** |
+| **mar 24 nov** | **Fotos de cada integrante**; aviso de seleccionados y stand |
+| mié 25 – lun 30 nov | Muestra virtual |
+| mar 1 dic, 12–17 h | Expo presencial (Arena Borregos): demo en vivo en el stand |
 
 ## 3. Los 5 frentes
 
@@ -63,7 +64,7 @@ Cómo usar este repositorio: §4. Reparto acordado el 9-nov:
 *Encargados: Iván, Arianna y Mía.*
 
 1. **Descripción.** Pasar el diseño a circuitos reales: armar las 3 cajas en protoboard siguiendo `1_electronica/fuente/layouts.py`, medir componentes y comprobar que todo enciende y lee bien antes de meterlo en las carcasas.
-2. **Objetivo.** Mientras llega el hardware (sin fecha): dominar los circuitos y dejar listos los checklists de armado, la tabla de medición y el guion de pruebas para el **15 de nov**. Cuando llegue: en 1–2 días, las 3 cajas armadas en protoboard, con continuidad y voltajes verificados y cada sensor leyendo en el monitor serie.
+2. **Objetivo.** Mientras llega el hardware (sin fecha): dominar los circuitos y dejar listos los checklists de armado, la tabla de medición y el guion de pruebas para el **lunes 16 de nov**. Cuando llegue: en 1–2 días, las 3 cajas armadas en protoboard, con continuidad y voltajes verificados y cada sensor leyendo en el monitor serie.
 3. **Requisitos a instalar.** Ninguno obligatorio para armar. Para consultar diagramas: un visor de PDF/PNG (están en `1_electronica/`). Opcional: KiCad 10 (esquemáticos), Fritzing (vista de protoboard). Herramientas: multímetro, calibrador, pinzas, cautín si hay que soldar headers.
 4. **Puntos a investigar.**
    - Pinout del NodeMCU ESP8266 (D0–D8, A0, 3V3, VIN) y qué pines son de arranque (D3, D4, D8).
@@ -99,7 +100,7 @@ Cómo usar este repositorio: §4. Reparto acordado el 9-nov:
 *Encargadas: Mía y Arianna.*
 
 1. **Descripción.** Revisar, afinar y mejorar el diseño de las carcasas (3 cajas, capuchón de la LDR, portas del MC-38, soportes): estética, uniones, facilidad de armado, ventilación, montaje. Se puede cambiar lo que haga falta. Después imprimirlas y planear la instalación en el cuarto con el plano de ubicación.
-2. **Objetivo.** Para el **13 de nov**, una lista de mejoras al diseño decidida y aplicada; para el **15 de nov**, renders finales para el video y el reporte e impresas las piezas de prueba (peine de holguras). Las cajas finales se imprimen cuando el hardware llegue y se midan las piezas.
+2. **Objetivo.** Para el **jueves 12 de nov**, una lista de mejoras al diseño propuesta; el **viernes 13**, decidida; para el **lunes 16 de nov**, aplicada, renders finales para el video y el reporte e impresas las piezas de prueba (peine de holguras). Las cajas finales se imprimen cuando el hardware llegue y se midan las piezas.
 3. **Requisitos a instalar.** El laminador de la impresora (Creality Print, PrusaSlicer o Cura). Para ver modelos: el Visor 3D de Windows abre los `.3mf`, `.stl` y `.glb`. Para modificar el CAD: Python con `uv` y build123d (comando en `2_carcasas_3d/README.md`) o pedírselo al líder.
 4. **Puntos a investigar.**
    - Tolerancias de impresión FDM (holgura de 0.3 mm), el peine de holguras y por qué se imprime primero.
@@ -123,7 +124,7 @@ Cómo usar este repositorio: §4. Reparto acordado el 9-nov:
 *Encargado: Luis.*
 
 1. **Descripción.** Cargar y depurar el código de los 5 nodos; validar todo lo posible sin hardware (simulador y pruebas en PC) y después en las placas armadas.
-2. **Objetivo.** Para el **13 de nov**, el simulador de los 5 nodos funcionando de punta a punta con el servidor (MQTT + HTTP), y el firmware compilando con la versión final. Cuando llegue el hardware: los 5 nodos reales publicando, con LED, buzzer y LWT comportándose como se diseñó.
+2. **Objetivo.** Para el **viernes 13 de nov**, el simulador de los 5 nodos funcionando de punta a punta con el servidor (MQTT + HTTP), y el firmware compilando con la versión final. Cuando llegue el hardware: los 5 nodos reales publicando, con LED, buzzer y LWT comportándose como se diseñó.
 3. **Requisitos a instalar.** Arduino IDE 2.x con el core ESP8266 3.1.2 y las librerías de `3_firmware/guias/arduino_ide.md`, **o** VS Code + PlatformIO. Driver USB del NodeMCU (CP2102 o CH340, según la placa). Python 3.12 (para el simulador y `prueba_alarma.py`). Un cliente MQTT para observar (MQTT Explorer).
 4. **Puntos a investigar.**
    - Ciclo `setup()`/`loop()` sin bloqueos (`millis()` en vez de `delay()`).
@@ -147,7 +148,7 @@ Cómo usar este repositorio: §4. Reparto acordado el 9-nov:
 *Encargados: José María y Luis.*
 
 1. **Descripción.** La parte de software: Mosquitto, MySQL, API Node.js, n8n (alertas por WhatsApp/Telegram con horario) y el dashboard web con los indicadores.
-2. **Objetivo.** Para el **13 de nov**, el sistema completo corriendo en una laptop con Docker, recibiendo datos del simulador, con dashboard en vivo y al menos una alerta grave llegando al celular. Es lo que se puede demostrar aunque no llegue el hardware.
+2. **Objetivo.** Para el **viernes 13 de nov**, el sistema completo corriendo en la laptop con Windows 11 (Docker Desktop), recibiendo datos del simulador, con dashboard en vivo y al menos una alerta grave llegando al celular. Es lo que se puede demostrar aunque no llegue el hardware.
 3. **Requisitos a instalar.** Docker Desktop, Git, Node.js 20+ (para la API fuera de Docker), un cliente MySQL (MySQL Workbench o DBeaver), MQTT Explorer, Postman o `curl`.
 4. **Puntos a investigar.**
    - Docker Compose: servicios, volúmenes, redes y variables de entorno (`.env`, nunca en git).
@@ -155,7 +156,7 @@ Cómo usar este repositorio: §4. Reparto acordado el 9-nov:
    - API REST con Express: endpoints GET de consulta y POST de los nodos (`4_servidor/servidor/api/RestApi.js`).
    - n8n: disparadores MQTT/cron, nodos MySQL, CallMeBot y bot de Telegram; alertas "graves" de `README.md`, una por episodio, horario 7–22 h y resumen a las 7:00.
    - Dashboard con Chart.js y MQTT.js; los 5 indicadores propuestos en `5_expo/preguntas_pendientes.md` (B5).
-   - Oracle Cloud Always Free (ARM64) para después de la Expo.
+   - Oracle Cloud Always Free (ARM64): opcional, después de la Expo; el servidor es la laptop con Windows 11.
 5. **Qué aporta.** Convierte las lecturas en información útil para los encargados: historial, avisos al celular y tablero; también es el requisito de Web API del curso.
 6. **Instrucciones y entregable.**
    - Seguir `4_servidor/guias/tutorial_servidor.md`; `docker compose up` en `4_servidor/servidor/`; crear usuarios MQTT con `crear_usuarios_mqtt.sh`.
@@ -170,7 +171,7 @@ Cómo usar este repositorio: §4. Reparto acordado el 9-nov:
 *Encargados: todo el equipo.*
 
 1. **Descripción.** Todo lo que se entrega y se presenta: ExpoIngenierías (video, reporte, perfil, fotos, stand), entregas del curso, comunicación con encargados y profesores, y el repositorio en GitHub.
-2. **Objetivo.** Subir video, reporte y perfil antes del **20 de nov, 23:59**, y las fotos antes del **24 de nov**, cumpliendo los anexos 4–6 de la convocatoria.
+2. **Objetivo.** Subir video, reporte y perfil antes del **viernes 20 de nov, 23:59** (meta: el jueves 19 en la noche), y las fotos antes del **martes 24 de nov**, cumpliendo los anexos 4–6 de la convocatoria.
 3. **Requisitos a instalar.** Editor de video (CapCut, Clipchamp o DaVinci Resolve), Canva o PowerPoint, Word, un convertidor a GIF (para la imagen 1 del perfil), Git + GitHub Desktop.
 4. **Puntos a investigar.**
    - Convocatoria 28ª edición: categoría **Desarrollo de prototipo físico** (confirmar con la que se registró `[POR CONFIRMAR]`) y sus criterios: qué se desarrolló, creatividad, funcionamiento robusto, técnicas de ingeniería, impacto.

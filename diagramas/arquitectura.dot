@@ -1,0 +1,59 @@
+// Argos: arquitectura vigente (9-nov-2026). Coherente con CLAUDE.md §2 y §5 y con servidor/docker-compose.yml.
+// Generar:  export PATH="/c/Program Files/Graphviz/bin:$PATH"
+//           dot -Tsvg docs/arquitectura.dot -o docs/arquitectura.svg && dot -Tpng -Gdpi=160 docs/arquitectura.dot -o docs/arquitectura.png
+digraph argos {
+  graph [rankdir=LR, fontname="Helvetica", fontsize=11, nodesep=0.35, ranksep=0.75, pad=0.3, newrank=true,
+         label="Argos: monitoreo y aviso del cuarto de incubación in vitro (G507 · TC1004B)\nArquitectura vigente, 9-nov-2026. Servidor: laptop con Windows 11 + Docker Desktop (Oracle Cloud, opcional después).",
+         labelloc=t];
+  node  [shape=box, style="rounded,filled", fillcolor="#f4f4f0", color="#555555", fontname="Helvetica", fontsize=10];
+  edge  [fontname="Helvetica", fontsize=9, color="#444444"];
+
+  subgraph cluster_cuarto {
+    label="Cuarto de incubación · 3 cajas, 5 NodeMCU ESP8266 · WiFi"; style="rounded,dashed"; color="#2c7a2c"; fontcolor="#2c7a2c";
+    subgraph cluster_dht { label="Caja dht"; style="rounded"; color="#9bbf9b"; fontcolor="#2c7a2c";
+      dht [label="nodo dht\nDHT22 · OLED 2.42\"\nbotón · buzzer (2N2222)\nalarma local fail-safe"]; }
+    subgraph cluster_ent { label="Estación de entrada"; style="rounded"; color="#9bbf9b"; fontcolor="#2c7a2c";
+      pir    [label="nodo pir\nHC-SR501 (D5)"];
+      puerta [label="nodo puerta\nreed MC-38 (D5)"]; }
+    subgraph cluster_ana { label="Estación del anaquel"; style="rounded"; color="#9bbf9b"; fontcolor="#2c7a2c";
+      acel [label="nodo acel\nGY-61 + ADS1115 (I²C)"];
+      luz  [label="nodo luz\nLDR (A0)"]; }
+    leds [label="En los 5 nodos:\nLED verde (D7) = conexión\nLED rojo (D8) = alerta propia", shape=note, fillcolor="#fffbe6"];
+  }
+
+  subgraph cluster_srv {
+    label="Laptop Windows 11 · Docker Desktop · docker compose (proyecto argos)"; style="rounded"; color="#1f5fbf"; fontcolor="#1f5fbf";
+    nginx     [label="nginx :80\ndashboard (HTML + Chart.js + MQTT.js)\n/api/ → API · /mqtt → WebSocket", fillcolor="#e6efff"];
+    api       [label="API REST Node.js (Express)\núnica que escribe en MySQL\nmotor de alertas (persistencia 3 + histéresis,\nuna alerta por episodio)", fillcolor="#e6efff"];
+    mosquitto [label="Mosquitto 2.0.22 :1883\nusuario por nodo + ACL\nLWT · retenidos", fillcolor="#e6efff"];
+    mysql     [label="MySQL 8.4 (UTC)\nesquema v2", shape=cylinder, fillcolor="#e6efff"];
+    n8n       [label="n8n (solo avisos)\nhorario 7:00–22:00 America/Monterrey\nresumen a las 7:00 si hubo algo grave", fillcolor="#e6efff"];
+  }
+
+  whatsapp [label="CallMeBot\n(WhatsApp)", fillcolor="#eaf7ea"];
+  telegram [label="Telegram", fillcolor="#eaf7ea"];
+  usuarios [label="Equipo y encargados\nnavegador · WhatsApp · Telegram", shape=ellipse, fillcolor="#ffffff"];
+
+  wifi [label="WiFi
+(router del invernadero
+o propio en la demo)", shape=box, style="rounded,dashed,filled", fillcolor="#ffffff", color="#2c7a2c", fontcolor="#2c7a2c"];
+  {dht pir puerta acel luz} -> wifi [color="#2c7a2c", arrowhead=none];
+  wifi -> nginx [label="HTTP POST /api/mediciones · /api/eventos · /api/latido
+(X-API-Key): lo que se guarda", color="#1f5fbf", fontcolor="#1f5fbf"];
+  wifi -> mosquitto [label="MQTT en tiempo real: telemetria · evento · estado (LWT)
+cmd/alarma → dht (cada 60 s) · cmd/silenciar ← dht", color="#2c7a2c", fontcolor="#2c7a2c", dir=both];
+
+  nginx -> api [label="/api/"];
+  api -> mysql [label="INSERT / SELECT"];
+  api -> mosquitto [label="publica cmd/alarma
+e invernadero/alertas;
+escucha estado/+ (LWT)", dir=both, style=dashed];
+  mosquitto -> n8n [label="invernadero/alertas"];
+  nginx -> mosquitto [label="/mqtt (WebSocket)
+para el dashboard", style=dotted];
+  n8n -> whatsapp;
+  n8n -> telegram;
+  whatsapp -> usuarios [style=dotted, arrowhead=none];
+  telegram -> usuarios [style=dotted, arrowhead=none];
+  usuarios -> nginx [label="abre el dashboard", style=dotted, constraint=false];
+}

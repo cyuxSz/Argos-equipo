@@ -1,0 +1,46 @@
+// Argos: despliegue con Docker Compose (servidor/docker-compose.yml), 9-nov-2026.
+// Generar:  export PATH="/c/Program Files/Graphviz/bin:$PATH"
+//           dot -Tpng -Gdpi=140 docs/diagramas/despliegue_docker.dot -o docs/diagramas/despliegue_docker.png
+digraph despliegue {
+  graph [rankdir=LR, fontname="Helvetica", fontsize=11, nodesep=0.4, ranksep=0.8, pad=0.3,
+         label="Argos: despliegue en la laptop con Windows 11 (Docker Desktop · docker compose, proyecto \"argos\")\nPuertos publicados a la red: 80 (nginx) y 1883 (MQTT). MySQL y n8n solo en 127.0.0.1. Claves en .env (no se sube).",
+         labelloc=t];
+  node [shape=box, style="rounded,filled", fillcolor="#e6efff", color="#555555", fontname="Helvetica", fontsize=10];
+  edge [fontname="Helvetica", fontsize=9, color="#444444"];
+
+  nodos    [label="5 NodeMCU\n(3 cajas)", fillcolor="#f4f4f0"];
+  navegador [label="Navegador\n(dashboard)", shape=ellipse, fillcolor="#ffffff"];
+  avisos   [label="WhatsApp (CallMeBot)\nTelegram", fillcolor="#eaf7ea"];
+
+  subgraph cluster_host {
+    label="Laptop Windows 11 · Docker Desktop"; style="rounded"; color="#1f5fbf"; fontcolor="#1f5fbf";
+    p80   [label=":80", shape=circle, fixedsize=true, width=0.5, fillcolor="#ffffff"];
+    p1883 [label=":1883", shape=circle, fixedsize=true, width=0.55, fillcolor="#ffffff"];
+    p3308 [label="127.0.0.1\n:3308", shape=circle, fixedsize=true, width=0.75, fillcolor="#ffffff", fontsize=8];
+    p5678 [label="127.0.0.1\n:5678", shape=circle, fixedsize=true, width=0.75, fillcolor="#ffffff", fontsize=8];
+
+    subgraph cluster_red {
+      label="Red interna de Docker"; style="rounded,dashed"; color="#7a9cc6"; fontcolor="#1f5fbf";
+      nginx     [label="argos-nginx\nnginx:1.30.6-alpine\nweb/ (dashboard) · /api/ · /mqtt"];
+      api       [label="argos-api\nNode.js (build ./api)\nRestApi.js + alertas.js"];
+      mosquitto [label="argos-mosquitto\neclipse-mosquitto:2.0.22\n1883 · 9001 (WebSocket)"];
+      mysql     [label="argos-mysql\nmysql:8.4 · UTC\nesquema.sql + 02_usuarios.sh", shape=cylinder];
+      n8n       [label="argos-n8n\nn8nio/n8n:2.45.7\nTZ America/Monterrey"];
+    }
+    vols [label="Volúmenes:\nmosquitto_datos · mysql_datos · n8n_datos", shape=note, fillcolor="#fffbe6"];
+  }
+
+  nodos -> p80 [label="HTTP POST /api/*"];
+  nodos -> p1883 [label="MQTT"];
+  navegador -> p80;
+  p80 -> nginx;
+  p1883 -> mosquitto;
+  nginx -> api [label="/api/ → :3000"];
+  nginx -> mosquitto [label="/mqtt → :9001", style=dotted];
+  api -> mysql [label="argos_escritura"];
+  api -> mosquitto [label="usuario api", dir=both, style=dashed];
+  n8n -> mosquitto [label="usuario n8n\n(invernadero/alertas)", dir=back];
+  n8n -> avisos;
+  p3308 -> mysql [label="Workbench / DBeaver", style=dotted];
+  p5678 -> n8n [label="editor", style=dotted];
+}

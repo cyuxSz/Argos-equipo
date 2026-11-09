@@ -12,7 +12,7 @@ Este repositorio es **solo para leer y organizarnos**: cada carpeta es un frente
 
 - Mide temperatura y humedad (rango 22–28 °C y 40–60 % HR), la luz de las lámparas, movimiento en la entrada, apertura de la puerta y golpes en el anaquel.
 - Cada sensor tiene su NodeMCU ESP8266 (5 en total) repartidos en **3 cajas**: `dht` (con pantalla y buzzer), estación de entrada (`pir` + `puerta`) y estación del anaquel (`acel` + `luz`).
-- Los nodos mandan datos por MQTT (tiempo real) y HTTP (guardar) a un servidor con Mosquitto, API Node.js, MySQL, n8n y un dashboard web.
+- Los nodos mandan datos por HTTP (lo que se guarda) y MQTT (tiempo real) al servidor: una **laptop con Windows 11 y Docker Desktop** que corre Mosquitto, la API Node.js (con el motor de alertas), MySQL, n8n (avisos) y el dashboard web. Oracle Cloud queda como opción para después.
 - Avisos graves por WhatsApp y Telegram de 7:00 a 22:00; fuera de horario se acumulan y llega un resumen a las 7:00.
 - Futuro (opcional): controlar el fotoperiodo de las luminarias con relés.
 
@@ -26,7 +26,9 @@ Este repositorio es **solo para leer y organizarnos**: cada carpeta es un frente
 | [4_servidor](4_servidor/) | Servidor, BD, API, alertas y dashboard | José María, Luis |
 | [5_expo](5_expo/) | ExpoIngenierías y entregables | Todo el equipo |
 
-`diagramas/` tiene la arquitectura, el despliegue en Docker y el flujo del firmware.
+`diagramas/` tiene la arquitectura, el despliegue en Docker (Graphviz: `.dot` + PNG/SVG) y el flujo del firmware (`firmware_flujo.md`, GitHub dibuja los diagramas).
+
+**Arranque: martes 10 de noviembre.** Fechas en [PLAN.md](PLAN.md#2-calendario-que-manda).
 
 ## Cómo verlo sin saber git
 

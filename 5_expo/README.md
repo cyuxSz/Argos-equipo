@@ -8,11 +8,14 @@ Fuente: convocatoria de la 28.ª edición y página oficial https://expoingenier
 
 | Fecha | Qué |
 |---|---|
-| 9 nov | Aviso de proyectos preseleccionados (por correo) |
-| **20 nov, 23:59** | Subir **video**, **reporte técnico** y **perfil del proyecto** |
-| **24 nov** | Subir la **foto de cada integrante**; aviso de seleccionados y stand |
-| 25–30 nov | Muestra y concurso virtual |
-| 1 dic, 12:00–17:00 | Concurso presencial en Arena Borregos; premiación a las 19:00 en Aulas 6 |
+| lun 9 nov | Aviso de proyectos preseleccionados (por correo) |
+| mar 10 nov | Arranque del equipo |
+| mar 17 nov | Grabación del video |
+| jue 19 nov | Video, reporte y perfil listos; meta: subirlos esa noche |
+| **vie 20 nov, 23:59** | Límite para subir **video**, **reporte técnico** y **perfil del proyecto** |
+| **mar 24 nov** | Subir la **foto de cada integrante**; aviso de seleccionados y stand |
+| mié 25 – lun 30 nov | Muestra y concurso virtual |
+| mar 1 dic, 12:00–17:00 | Concurso presencial en Arena Borregos; premiación a las 19:00 en Aulas 6 |
 
 Categoría: **Desarrollo de prototipo físico** `[POR CONFIRMAR con el registro]`. El jurado pregunta qué se desarrolló, qué tan creativo es, si el prototipo funciona de forma robusta y consistente, qué técnicas de ingeniería se aplicaron y qué impacto tiene.
 
