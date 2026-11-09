@@ -36,6 +36,22 @@ Latido cada 60 s. `dht` publica cada 30 s; `luz` muestrea cada 5 s y publica el 
 
 ![Pantalla OLED](guias/oled_estados.png)
 
+## Flujo del firmware
+
+Cada lectura o evento sale por dos caminos: MQTT (tiempo real) y HTTP POST a la API (lo que se guarda). Los diagramas ayudan a seguir el código; la versión editable está en [../diagramas/firmware_flujo.md](../diagramas/firmware_flujo.md).
+
+**Parte común (los 5 nodos)**
+
+<img src="../diagramas/firmware_comun.png" width="650" alt="Flujo común de los nodos">
+
+**Nodos de evento y de luz (`pir`, `puerta`, `acel`, `luz`)**
+
+<img src="../diagramas/firmware_eventos.png" width="650" alt="Flujo de los nodos de evento y de luz">
+
+**Nodo `dht`**
+
+<img src="../diagramas/firmware_dht.png" width="450" alt="Flujo del nodo dht">
+
 ## Pruebas sin hardware
 
 ```bash
