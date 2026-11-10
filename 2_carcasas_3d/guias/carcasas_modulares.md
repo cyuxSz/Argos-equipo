@@ -77,7 +77,7 @@ Salidas: en este repositorio las piezas están en `2_carcasas_3d/imprimir/modula
 
 ## Ideas de forma e identidad (sin construir)
 
-Ideas generales para que las cajas se reconozcan como "Argos". Todas deben seguir siendo imprimibles sin soportes, limpiables con alcohol y caber en la cama.
+Resumen; la versión para investigar y decidir está en [ideas_forma.md](ideas_forma.md). Ideas generales para que las cajas se reconozcan como "Argos". Todas deben seguir siendo imprimibles sin soportes, limpiables con alcohol y caber en la cama.
 
 1. **El ojo de Argos.** Argos Panoptes es el gigante de los cien ojos. Motivo de ojo alrededor del domo del PIR y de la ventana de la pantalla: un aro en relieve o un iris de ranuras radiales que además sirve de ventilación.
 2. **Silueta de cápsula.** Extremos semicirculares en lugar de rectángulo. Encaja bien con las estaciones horizontales y se distingue de un gabinete comercial.

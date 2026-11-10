@@ -51,7 +51,7 @@ Modelo base nuevo de las tres cajas: la protoboard entra con **clips**, la tapa 
 
 - Piezas: `imprimir/modular_stl/`. Cupón de clips (se imprime primero): `imprimir/pruebas_ajuste/prueba_clips_base.stl` y `prueba_clips_tira.stl`.
 - El cableado no cambia: los esquemáticos y dibujos de protoboard de `1_electronica/` siguen vigentes.
-- **Tarea del frente:** decidir si se adopta, y proponer la **forma e identidad** de las cajas (ideas iniciales al final de la guía).
+- **Tarea del frente:** decidir si se adopta, y definir la **forma e identidad** de las cajas con [guias/ideas_forma.md](guias/ideas_forma.md): ideas generales (persianas del DHT22, ojo de Argos y otras), qué investigar de cada una y una tabla para decidir.
 
 ## El cuarto
 
