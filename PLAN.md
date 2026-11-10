@@ -100,11 +100,14 @@ Cómo usar este repositorio: §4. Reparto acordado el 9-nov:
 *Encargadas: Mía y Arianna.*
 
 1. **Descripción.** Revisar, afinar y mejorar el diseño de las carcasas (3 cajas, capuchón de la LDR, portas del MC-38, soportes): estética, uniones, facilidad de armado, ventilación, montaje. Se puede cambiar lo que haga falta. Después imprimirlas y planear la instalación en el cuarto con el plano de ubicación.
-2. **Objetivo.** Para el **jueves 12 de nov**, una lista de mejoras al diseño propuesta; el **viernes 13**, decidida; para el **lunes 16 de nov**, aplicada, renders finales para el video y el reporte e impresas las piezas de prueba (peine de holguras). Las cajas finales se imprimen cuando el hardware llegue y se midan las piezas.
+2. **Objetivo.** Para el **jueves 12 de nov**, una lista de mejoras al diseño y los bocetos de identidad propuestos; el **viernes 13**, decididos (incluye si se adopta la variante modular); para el **lunes 16 de nov**, aplicada, renders finales para el video y el reporte e impresas las piezas de prueba (peine de holguras). Las cajas finales se imprimen cuando el hardware llegue y se midan las piezas.
 3. **Requisitos a instalar.** El laminador de la impresora (Creality Print, PrusaSlicer o Cura). Para ver modelos: el Visor 3D de Windows abre los `.3mf`, `.stl` y `.glb`. Para modificar el CAD: Python con `uv` y build123d (comando en `2_carcasas_3d/README.md`) o pedírselo al líder.
 4. **Puntos a investigar.**
    - Tolerancias de impresión FDM (holgura de 0.3 mm), el peine de holguras y por qué se imprime primero.
    - Uniones: insertos térmicos M3 vs tuercas cautivas vs tornillo directo en plástico (piloto de 2.8 mm); orejas, tacos de pared y ranuras tipo bocallave.
+   - Uniones a presión (clips): brazo en voladizo, relación largo/espesor, redondeo en la raíz, por qué el brazo se imprime acostado y cómo se afina el apriete con un cupón. Ejemplo ya modelado en `2_carcasas_3d/guias/carcasas_modulares.md`.
+   - Sistemas modulares de montaje impresos (SnapBoards, CheeseBoard, openGrid): qué ideas sirven para quitar y poner la electrónica sin herramienta.
+   - **Forma e identidad del producto:** buscar referencias de sensores y estaciones ambientales, siluetas distintas a la caja rectangular, patrones de ventilación, dos tonos, iconos y un rasgo que identifique a Argos (por ejemplo el ojo). Lista inicial de ideas en `2_carcasas_3d/guias/carcasas_modulares.md`.
    - Orientación de impresión sin soportes, puentes y voladizos; PETG vs PLA (temperatura, humedad, limpieza con alcohol).
    - Ventilación pasiva y por qué el DHT22 va en una cámara separada abajo.
    - Alivio de tensión de cables y paso del micro-USB/USB-C.
@@ -112,7 +115,9 @@ Cómo usar este repositorio: §4. Reparto acordado el 9-nov:
 5. **Qué aporta.** Convierte el prototipo de banco en algo instalable, limpio y presentable: pesa mucho en la impresión del jurado y en el uso real.
 6. **Instrucciones y entregable.**
    - Revisar los modelos (visor web y renders) y proponer mejoras: forma y acabado, tamaño, ubicación de LED y pantalla, tipo de unión de la tapa, cómo se cuelga o se fija, acceso a cables. Las mejoras se aplican en el código build123d (`2_carcasas_3d/codigo/nodos.py`, medidas en `2_carcasas_3d/codigo/medidas.json`) o se piden a Luis con un boceto.
-   - Imprimir primero `2_carcasas_3d/imprimir/pruebas_ajuste/` (peine de holguras y piezas de ajuste) y registrar el resultado en `2_carcasas_3d/guias/pruebas_ajuste.md`.
+   - **Variante modular (10-nov):** revisar el modelo base con clips de protoboard, tapa a presión sin tornillos y grapa de la OLED (`2_carcasas_3d/guias/carcasas_modulares.md`, renders en `2_carcasas_3d/renders/modular/`). Decidir si se adopta en lugar de la tapa con tornillos y qué falta (retención del PIR, bandeja, montaje).
+   - **Propuesta de identidad:** 2 o 3 bocetos a mano que combinen las ideas de forma (cápsula, frente inclinado, persianas del DHT22, aro de luz, ojo de Argos, patrón de ventilas, dos tonos). Elegir una con el equipo y aplicarla primero al `dht`.
+   - Imprimir primero `2_carcasas_3d/imprimir/pruebas_ajuste/` (peine de holguras y piezas de ajuste) y el cupón de clips de `2_carcasas_3d/imprimir/pruebas_ajuste/`; registrar el resultado en `2_carcasas_3d/guias/pruebas_ajuste.md`.
    - Con las medidas del Frente 1, regenerar (Luis, en el repo principal) e imprimir las piezas de `2_carcasas_3d/imprimir/3mf/` según `2_carcasas_3d/guias/impresion_3d.md`.
    - Medir el cuarto (lista de §1) y actualizar `SUP` en `2_carcasas_3d/codigo/cuarto.py`; rehacer el plano.
    - **Entregable:** carcasas impresas y montadas, fotos y renders para el Frente 5, `2_carcasas_3d/guias/plano_ubicacion.md` con medidas reales y la lista de fijaciones usadas.

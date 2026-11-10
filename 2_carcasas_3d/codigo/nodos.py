@@ -16,14 +16,18 @@ Ejes del nodo: x = ancho (derecha viendo el frente), y = alto (arriba), z = prof
 """
 import json
 import math
+import os
 import sys
 from pathlib import Path
 
-from build123d import (Align, Axis, Box, Cone, Cylinder, Compound, Plane, Pos, Polygon, Rectangle, Rot, SortBy, Text, chamfer,
+from build123d import (Align, Axis, Box, Cone, Cylinder, Compound, Plane, Pos, Polygon, Rectangle, RectangleRounded, Rot, SortBy, Text, chamfer,
                        export_step, export_stl, extrude, fillet)
 
 RAIZ = Path(__file__).resolve().parent
-SALIDA = RAIZ / "exports"
+# Variante modular (10-nov): protoboard con clips, tapa a presion sin tornillos, esquinas redondeadas.
+# Se activa con --modular o ARGOS_MODULAR=1 y escribe en exports/modular/ (la version con tornillos queda intacta).
+MODULAR = os.environ.get("ARGOS_MODULAR") == "1" or "--modular" in sys.argv
+SALIDA = RAIZ / "exports" / "modular" if MODULAR else RAIZ / "exports"
 sys.path.insert(0, str(RAIZ.parent / "hardware" / "breadboard"))
 import layouts  # noqa: E402
 
@@ -59,6 +63,11 @@ DIS = dict(
     perno=(3.4, 3.4, 7.4),               # perno impreso: diametro del cuello, largo del cuello, cabeza
     anaquel_espesor=18.0,                # [POR CONFIRMAR] espesor del borde del anaquel
     dupont=(2.5, 14.0),                  # carcasa del conector macho: lado y alto sobre la protoboard
+    # --- variante modular: todo nominal, se afina con el cupon cad/pruebas_clips.py ---
+    radio=6.0,                           # radio de las esquinas verticales de la caja
+    clip=dict(largo=22.0, raiz=4.0, esp=1.6, gancho=1.0, juego=0.15, sobre=0.1),   # clip de la protoboard
+    broche=dict(alto=12.0, ancho=10.0, esp=1.4, aprieto=0.5, ranura=0.8),          # lengua de pared de la tapa
+    grapa=dict(esp=1.6, ancho=8.0, aprieto=0.4),                                   # grapa de la OLED
 )
 
 PASO = layouts.PASO
@@ -110,6 +119,62 @@ def gota_x(xc, yc, zc, d, largo):
     return Pos(xc, yc, zc) * Rot(0, 90, 0) * Cylinder(r, largo) + (rombo & caja_c(xc, yc, zc, largo, 4 * r, 2 * r))
 
 
+def prisma_xz(pts, y0, largo):
+    """Perfil dibujado en el plano XZ (x, z) y extruido de y0 a y0 + largo."""
+    s = extrude(Plane.XZ * Polygon(*pts, align=None), amount=largo)
+    return Pos(0, y0 - s.bounding_box().min.Y, 0) * s      # el sentido de extrusion depende del giro del perfil
+
+
+def clip_piso(sx, x_borde, yc, z_sup, x_pared, p, gancho=None):
+    """Clip de la protoboard: brazo vertical paralelo al borde largo, suelto del piso por una ranura pasante
+    (se imprime desde la cama, con las fibras a lo largo del brazo) y gancho en V sobre el borde de la protoboard.
+    Devuelve (suma, resta). sx = lado (+1 derecha); x_borde = semiancho de la protoboard; yc = centro del brazo."""
+    c = DIS["clip"]
+    g = c["gancho"] if gancho is None else gancho
+    xi = x_borde + c["juego"]
+    xo = xi + c["esp"]
+    y0, y1 = yc - c["largo"] / 2, yc + c["largo"] / 2
+    zb = z_sup + c["sobre"]
+    ztop = zb + 2 * g + 0.4
+    resta = caja_c(sx * (xi - 0.6 + xo + g + 0.4) / 2, (y0 + c["raiz"] + y1 + 0.8) / 2, -0.1,
+                   xo + g + 0.4 - (xi - 0.6), y1 + 0.8 - (y0 + c["raiz"]), p + 0.2)
+    brazo = caja_c(sx * (xi + xo) / 2, yc, 0, c["esp"], c["largo"], ztop)
+    refuerzo = caja_c(sx * (xo + x_pared) / 2, y0 + c["raiz"] / 2, 0, x_pared - xo + 0.02, c["raiz"], ztop)
+    # gancho en V: 45 grados por abajo (se imprime sin soportes; la protoboard sale jalandola) y por arriba (entrada)
+    diente = prisma_xz([(sx * xi, zb), (sx * (xi - g), zb + g), (sx * (xi - g), zb + g + 0.4), (sx * xi, ztop)],
+                       y1 - 7.0, 7.0)
+    return brazo + refuerzo + diente, resta
+
+
+def lengua_pared(sx, W, p, Db, yc, aprieto=None):
+    """Lengua elastica cortada en la pared lateral (dos ranuras desde el borde) con un diente en V hacia adentro
+    que entra en la muesca de la pestana de la tapa. Devuelve (suma, resta)."""
+    b = DIS["broche"]
+    ap = b["aprieto"] if aprieto is None else aprieto
+    xi = W / 2 - p
+    zr = Db - b["alto"]
+    alivio = p - b["esp"]
+    zc = Db - 3.5
+    resta = caja_c(sx * (xi + alivio / 2 - 0.005), yc, zr, alivio + 0.01, b["ancho"], b["alto"] + 0.1)
+    for dy in (-1, 1):
+        resta += caja_c(sx * (W / 2 - p / 2), yc + dy * (b["ancho"] + b["ranura"]) / 2, zr, p + 1, b["ranura"],
+                        b["alto"] + 0.1)
+    alto_d = alivio + DIS["holgura"] + ap     # del fondo del alivio a la punta
+    diente = prisma_xz([(sx * (xi + alivio), zc - alto_d), (sx * (xi + alivio), zc + alto_d),
+                        (sx * (xi + alivio - alto_d), zc)], yc - 4.0, 8.0)
+    return diente, resta
+
+
+def pestana_tapa(sx, W, p, Db, yc):
+    """Pestana de la tapa que baja por dentro de la pared, con muesca en V para el diente de la lengua."""
+    xo = W / 2 - p - DIS["holgura"]
+    xin = xo - 3.0
+    zc, zb = Db - 3.5, Db - 7.0
+    pts = [(xin, Db + 0.2), (xo, Db + 0.2), (xo, zc + 0.85), (xo - 0.85, zc), (xo, zc - 0.85), (xo, zb + 1.0),
+           (xo - 1.0, zb), (xin, zb)]
+    return prisma_xz([(sx * x, z) for x, z in pts], yc - 4.5, 9.0)
+
+
 def plano_frente(n, origen):
     """Plano del frente para texto legible: en las cajas horizontales (giro) el marco local esta girado."""
     xd = (0, -1, 0) if getattr(n, "giro", False) else (1, 0, 0)
@@ -151,7 +216,7 @@ class Nodo:
 
 
 def comun(nombre, lay_nombre, camara=0.0, orejas="vertical", y_marca=None, y_led_desde_arriba=14.0,
-          leds=((None, None),), giro=False, led_x=0.0):
+          leds=((None, None),), giro=False, led_x=0.0, broches=None):
     """Gemelo de la protoboard + caja base/tapa compartida por todas las cajas.
 
     camara: alto interior de una camara inferior aislada (solo dht); 0 = sin camara.
@@ -162,6 +227,7 @@ def comun(nombre, lay_nombre, camara=0.0, orejas="vertical", y_marca=None, y_led
     leds: un par verde/rojo por NodeMCU: (columna de la protoboard o None = arriba, etiqueta hundida).
     Con 2 NodeMCU (estaciones) la protoboard es la MB-102 de 830 puntos y la energia entra por un
     modulo USB-C en la pared izquierda.
+    broches (solo variante modular): alturas y de las lenguas de pared que retienen la tapa.
     """
     n = Nodo()
     n.giro = giro
@@ -273,16 +339,22 @@ def comun(nombre, lay_nombre, camara=0.0, orejas="vertical", y_marca=None, y_led
 
     # ═════ BASE ═════
     ch = DIS["chaflan"]
-    base = Box(W, H, Db, align=(C, MIN, MIN))
-    base = chamfer(base.edges().filter_by(Axis.Z), ch)
-    base = chamfer(base.edges().group_by(Axis.Z)[0], ch)
-    base -= caja_c(0, H / 2, p, W - 2 * p, H - 2 * p, Db)
+    R = DIS["radio"]
+    if MODULAR:
+        base = Pos(0, H / 2, 0) * extrude(RectangleRounded(W, H, R), amount=Db)
+        base = chamfer(base.edges().group_by(Axis.Z)[0], ch)
+        base -= Pos(0, H / 2, p) * extrude(RectangleRounded(W - 2 * p, H - 2 * p, R - p), amount=Db)
+    else:
+        base = Box(W, H, Db, align=(C, MIN, MIN))
+        base = chamfer(base.edges().filter_by(Axis.Z), ch)
+        base = chamfer(base.edges().group_by(Axis.Z)[0], ch)
+        base -= caja_c(0, H / 2, p, W - 2 * p, H - 2 * p, Db)
 
     # torretas con inserto (la tapa trae su propia torreta de 3 mm)
     xt = W / 2 - DIS["torreta_margen"]
     yt = (DIS["torreta_margen"], H - DIS["torreta_margen"])
     z_torre = Db - DIS["torreta_tapa"]
-    n.torretas = torretas = [(sx * xt, y) for sx in (-1, 1) for y in yt]
+    n.torretas = torretas = [] if MODULAR else [(sx * xt, y) for sx in (-1, 1) for y in yt]
     for x, y in torretas:
         base += cil(x, y, p, DIS["torreta_d"], z_torre - p)
         base -= cil(x, y, z_torre - DIS["inserto_prof"], DIS["inserto_d"], DIS["inserto_prof"] + 0.01)
@@ -304,6 +376,21 @@ def comun(nombre, lay_nombre, camara=0.0, orejas="vertical", y_marca=None, y_led
         for y, sy in ((pb.y_inf - hg, -1), (pb.y_sup + hg, 1)):
             base += caja_c(sx * (xg + 0.6), y - sy * 3, p, 1.2, 6, 2.5)
             base += caja_c(sx * (xg - 3 + 0.6), y + sy * 0.6, p, 6, 1.2, 2.5)
+
+    if MODULAR:
+        # clips de la protoboard (en diagonal; lejos de la silica y del modulo USB-C) y lenguas de la tapa
+        if estacion:
+            n.clips = [(-1, pb.y_inf + 25), (-1, pb.y_sup - 60), (1, pb.y_inf + 58), (1, pb.y_sup - 25)]
+        else:
+            n.clips = [(-1, pb.y_inf + 30), (1, pb.y_sup - 22)]   # el izquierdo libra los Dupont del buzzer (dht)
+        for sx, yc in n.clips:
+            suma, resta = clip_piso(sx, pb.ancho / 2, yc, pb.z_sup, W / 2 - p, p)
+            base = base - resta + suma
+        n.broches = broches or ((30.0, H / 2, H - 30.0) if estacion else (H * 0.40, H - 14.0))
+        for sx in (-1, 1):
+            for yc in n.broches:
+                suma, resta = lengua_pared(sx, W, p, Db, yc)
+                base = base - resta + suma
 
     # compartimento de silica: costilla perforada junto a la pared derecha
     y_sil = (y_pb_inf + 12, y_pb_inf + 42)
@@ -380,12 +467,23 @@ def comun(nombre, lay_nombre, camara=0.0, orejas="vertical", y_marca=None, y_led
         print("aviso: texto lateral omitido:", err)
 
     # ═════ TAPA ═════
-    contorno = chamfer(Rectangle(W, H).vertices(), ch)
+    contorno = RectangleRounded(W, H, R) if MODULAR else chamfer(Rectangle(W, H).vertices(), ch)
     tapa = Pos(0, H / 2, Db) * extrude(contorno, amount=t)
     tapa = chamfer(tapa.edges().group_by(Axis.Z)[-1], 1.2)
     lw, lh = DIS["labio"]
     wi, hi = W - 2 * p - 2 * hg, H - 2 * p - 2 * hg
-    labio = caja_c(0, H / 2, Db - lh, wi, hi, lh) - caja_c(0, H / 2, Db - lh - 0.1, wi - 2 * lw, hi - 2 * lw, lh + 0.2)
+    if MODULAR:
+        tapa = chamfer(tapa.edges().group_by(Axis.Z)[0], 0.6)   # linea de sombra entre tapa y base
+        ri = R - p - hg
+        labio = (Pos(0, H / 2, Db - lh) * extrude(RectangleRounded(wi, hi, ri), amount=lh)
+                 - Pos(0, H / 2, Db - lh - 0.1) * extrude(RectangleRounded(wi - 2 * lw, hi - 2 * lw, ri - lw),
+                                                          amount=lh + 0.2))
+        for sx in (-1, 1):
+            for yc in n.broches:
+                tapa += pestana_tapa(sx, W, p, Db, yc)
+    else:
+        labio = (caja_c(0, H / 2, Db - lh, wi, hi, lh)
+                 - caja_c(0, H / 2, Db - lh - 0.1, wi - 2 * lw, hi - 2 * lw, lh + 0.2))
     if camara:
         labio -= caja(-W / 2, n.y_pared1 - hg, Db - lh - 0.1, W, n.y_pared2 + 2 - n.y_pared1 + 2 * hg, lh + 0.2)
     for x, y in torretas:
@@ -683,6 +781,21 @@ def nodo_dht(lay_nombre="nodo_dht"):
     marco = caja_c(0, y_oled + oy / 2, Db - oz, mi[0] + 2.4, mi[1] + 2.4, oz) - \
         caja_c(0, y_oled + oy / 2, Db - oz - 0.1, mi[0], mi[1], oz + 0.2)
     marco -= caja_c(0, y_oled - 1.2, Db - oz - 0.1, 18, 4, oz + 0.2)   # salida del conector
+    if MODULAR:
+        # grapa suelta (se imprime de canto) que cruza la espalda de la OLED y muerde dos muescas del marco
+        gr = DIS["grapa"]
+        mx, yc_g, zg = mi[0] / 2 + 1.2, y_oled + oy / 2, Db - 2.0
+        z_b = Db - oz - 0.2 - gr["esp"]
+        grapa = caja_c(0, yc_g, z_b, 2 * (mx + 0.15 + 1.4), gr["ancho"], gr["esp"])
+        for sx in (-1, 1):
+            marco -= prisma_xz([(sx * mx, zg - 0.7), (sx * mx, zg + 0.7), (sx * (mx - 0.6), zg)],
+                               yc_g - gr["ancho"] / 2 - 1, gr["ancho"] + 2)
+            grapa += caja_c(sx * (mx + 0.15 + 0.7), yc_g, z_b, 1.4, gr["ancho"], Db - 1.0 - z_b)
+            d = 0.15 + gr["aprieto"]
+            grapa += prisma_xz([(sx * (mx + 0.15), zg - d - 0.1), (sx * (mx + 0.15), zg + d + 0.1),
+                                (sx * (mx + 0.15 - d), zg)], yc_g - gr["ancho"] / 2, gr["ancho"])
+        n.extras["grapa_oled"] = grapa
+        n.orientacion["grapa_oled"] = "de canto (perfil en U sobre la cama)"
     n.tapa += marco
 
     # boton 6x6 con embolo impreso (ceja de 1 mm entre boton y tapa)
@@ -910,12 +1023,14 @@ def a_cama(nombre, s):
         s = Rot(180, 0, 0) * s
     elif nombre == "soporte_anaquel":
         s = Rot(0, 90, 0) * s
+    elif nombre.startswith("grapa"):
+        s = Rot(90, 0, 0) * s
     bb = s.bounding_box()
     return Pos(-bb.center().X, -bb.center().Y, -bb.min.Z) * s
 
 
 def exportar(n, res):
-    SALIDA.mkdir(exist_ok=True)
+    SALIDA.mkdir(parents=True, exist_ok=True)
     nodo = n["nodo"]
     todas = {**n["piezas"], **n["montaje"]}
     (SALIDA / "impresion").mkdir(exist_ok=True)
@@ -951,6 +1066,11 @@ SUELTOS = {"luz": nodo_luz, "pir": nodo_pir, "puerta": nodo_puerta, "acel": nodo
 
 def main(lista):
     falla = False
+    lista = [a for a in lista if not a.startswith("--")]
+    if MODULAR:
+        import vistas
+        vistas.RENDERS = RAIZ / "renders" / "modular"
+        vistas.RENDERS.mkdir(parents=True, exist_ok=True)
     for nodo in lista or NODOS:
         n = {**NODOS, **SUELTOS}[nodo]()
         res = verificar(n)
