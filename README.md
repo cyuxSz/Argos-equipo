@@ -1,4 +1,4 @@
-# Argos · repositorio del equipo (lectura)
+# Argos · repositorio del equipo (lectura).
 
 Sistema IoT de **monitoreo y aviso** para el cuarto de incubación in vitro del Invernadero Académico (Tec de Monterrey). Equipo G507, TC1004B.
 
